@@ -1,0 +1,5 @@
+package com.tankOfTitans.model.entity;
+
+public class Jugador {
+
+}
