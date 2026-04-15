@@ -1,5 +1,6 @@
 package com.tankOfTitans.model.entity;
 
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -18,7 +19,7 @@ public class Usuario {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
+  
 	@NotBlank
     @Column(name = "nombre", unique = false, nullable = false, length = 50)
     private String nombre;
@@ -44,4 +45,10 @@ public class Usuario {
 		this.createdAt = LocalDateTime.now();
 	}
     
+
+    private String nombre;
+    private String nickname;
+    private String password;
+    private String email;
+
 }
