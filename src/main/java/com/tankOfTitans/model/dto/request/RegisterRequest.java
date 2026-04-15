@@ -1,4 +1,4 @@
-package com.tankOfTitans.model.dto;
+package com.tankOfTitans.model.dto.request;
 
 import lombok.Data;
 
