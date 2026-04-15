@@ -44,11 +44,5 @@ public class Usuario {
 	public void prePersist() {
 		this.createdAt = LocalDateTime.now();
 	}
-    
-
-    private String nombre;
-    private String nickname;
-    private String password;
-    private String email;
 
 }
