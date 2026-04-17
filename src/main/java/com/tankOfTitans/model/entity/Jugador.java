@@ -20,4 +20,8 @@ public class Jugador {
 	    private int puntosAccion;
 
 	    private boolean esTurno;
+
+		
+	    
+	    
 }
