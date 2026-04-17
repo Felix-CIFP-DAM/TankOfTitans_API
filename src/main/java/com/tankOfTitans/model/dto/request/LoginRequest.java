@@ -1,15 +1,27 @@
 package com.tankOfTitans.model.dto.request;
 
-import lombok.Data;
-import jakarta.validation.constraints.NotBlank;
 
-@Data
+
 public class LoginRequest {
-	
-	@NotBlank(message = "El nickname es obligatorio")
-    private String nickname;
-
-    @NotBlank(message = "La contraseña es obligatoria")
+	private String nickname;
     private String password;
 
+    public LoginRequest() {
+    	
+    }
+
+    public String getNombreUsuario() { 
+    	return nickname;
+    }
+    public String getPassword() { 
+    	return password; 
+    }
+
+    public void setNombreUsuario(String nickname) {
+    	this.nickname = nickname;
+    }
+    public void setPassword(String password) {
+    	this.password = password; 
+    }
+	
 }
