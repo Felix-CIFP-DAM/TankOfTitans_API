@@ -10,14 +10,14 @@ public class LoginRequest {
     	
     }
 
-    public String getNombreUsuario() { 
+    public String getNickname() { 
     	return nickname;
     }
     public String getPassword() { 
     	return password; 
     }
 
-    public void setNombreUsuario(String nickname) {
+    public void setNickname(String nickname) {
     	this.nickname = nickname;
     }
     public void setPassword(String password) {

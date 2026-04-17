@@ -17,9 +17,17 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     }
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
+		
+		Usuario usuario = usuarioRepository.findByNick(nickname)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Usuario no encontrado: " + nickname));
+
+        return new org.springframework.security.core.userdetails.User(
+                usuario.getNickname(),
+                usuario.getPassword(),
+                new ArrayList<>()
+        );
 	}
 
 }
