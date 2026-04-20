@@ -10,21 +10,24 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tankOfTitans.model.dto.request.LoginRequest;
 import com.tankOfTitans.model.dto.request.RegisterRequest;
 import com.tankOfTitans.model.response.LoginResponse;
-import com.tankOfTitans.service.AuthService;
+import com.tankOfTitans.service.impl.AuthServiceImpl;
+import com.tankOfTitans.service.impl.RegisterServiceImpl;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
-	private final AuthService authService;
+	private final AuthServiceImpl authService;
+	private final RegisterServiceImpl registerService;
 
-	public AuthController(AuthService authService) {
+	public AuthController(AuthServiceImpl authService, RegisterServiceImpl registerService) {
 		this.authService = authService;
+		this.registerService = registerService;
 	}
 	
 	 @PostMapping("/register")
 	 public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-	        String message = authService.register(request);
+	        String message = registerService.register(request);
 	        return ResponseEntity.ok(message);
 	    }
 	 
