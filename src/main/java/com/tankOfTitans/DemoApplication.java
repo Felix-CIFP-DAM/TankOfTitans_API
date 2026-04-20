@@ -1,4 +1,4 @@
-package com.tankOfTitans.demo;
+package com.tankOfTitans;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

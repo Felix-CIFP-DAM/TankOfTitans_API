@@ -13,10 +13,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.advancedwars</groupId>
-    <artifactId>advanced-wars-backend</artifactId>
+    <groupId>com.tankOfTitans</groupId>
+    <artifactId>tank-of-titans</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>advanced-wars-backend</name>
+    <name>tank-of-titans</name>
 
     <properties>
         <java.version>21</java.version>
