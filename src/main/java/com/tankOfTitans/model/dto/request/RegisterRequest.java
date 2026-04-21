@@ -1,9 +1,22 @@
 package com.tankOfTitans.model.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class RegisterRequest {
-	private String nombre;
-	private String nickname;
+	@NotBlank(message = "El nombre es obligatorio")
+    private String nombre;
+
+    @NotBlank(message = "El nickname es obligatorio")
+    private String nickname;
+
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El formato del email no es válido")
     private String email;
+
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 4, message = "La contraseña debe tener al menos 4 caracteres")
     private String password;
 
     public RegisterRequest() {
@@ -12,7 +25,6 @@ public class RegisterRequest {
     
     
     public RegisterRequest(String nombre, String nickname, String email, String password) {
-		super();
 		this.nombre = nombre;
 		this.nickname = nickname;
 		this.email = email;
