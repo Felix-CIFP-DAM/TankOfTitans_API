@@ -13,35 +13,20 @@ import com.tankOfTitans.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-	private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
-    
-	public AuthServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil) {
-		this.usuarioRepository = usuarioRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.jwtUtil = jwtUtil;
-	}
-	
-	public String register(RegisterRequest request) {
-        if (usuarioRepository.existsByNickname(request.getNickname())) {
-            throw new RuntimeException("El nombre de usuario ya está en uso");
-        }
-        if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
-        }
 
-        Usuario user = new Usuario(
-                request.getNickname(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()), null
-        );
-
-        usuarioRepository.save(user);
-        return "Usuario registrado correctamente";
+    public AuthServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
-	
-	public LoginResponse login(LoginRequest request) {
+
+    
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
         Usuario user = usuarioRepository.findByNickname(request.getNickname())
                 .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
 
@@ -50,9 +35,28 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getId(), user.getNickname());
-
         return new LoginResponse(token, user.getId(), user.getNickname(), "Login correcto");
     }
-    
-    
+
+
+
+	@Override
+	public String register(RegisterRequest request) {
+		if (usuarioRepository.existsByNickname(request.getNickname())) {
+            throw new RuntimeException("El nickname ya está en uso");
+        }
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("El email ya está registrado");
+        }
+
+        Usuario user = new Usuario(
+                request.getNombre(),
+                request.getNickname(),
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword())
+        );
+
+        usuarioRepository.save(user);
+        return "Usuario registrado correctamente";
+	}
 }
