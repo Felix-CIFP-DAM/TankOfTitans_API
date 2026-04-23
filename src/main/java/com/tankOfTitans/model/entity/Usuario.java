@@ -3,8 +3,12 @@ package com.tankOfTitans.model.entity;
 
 import java.time.LocalDateTime;
 
+import com.tankOfTitans.model.entity.enums.Rol;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +41,9 @@ public class Usuario {
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Rol rol = Rol.USER;
 	
 	@Column(name = "created_at")
 	   private LocalDateTime createdAt;
@@ -52,15 +59,23 @@ public class Usuario {
 		
 	}
 
-	public Usuario(@NotBlank String nombre, @NotBlank String nickname, @Email @NotBlank String email,
-			@NotBlank String password) {
-		
+	
+	public Usuario(@NotBlank String nombre, @NotBlank String nickname, @NotBlank String password,
+			@Email @NotBlank String email) {
 		this.nombre = nombre;
 		this.nickname = nickname;
-		this.email = email;
 		this.password = password;
-		
+		this.email = email;
+		this.rol = rol.USER;
 	}
+	
+	public Usuario(String nombre, String nickname, String password, String email, Rol rol) {
+        this.nombre = nombre;
+        this.nickname = nickname;
+        this.password = password;
+        this.email = email;
+        this.rol = rol;
+    }
 
 
 
@@ -102,6 +117,14 @@ public class Usuario {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public Rol getRol() {
+		return rol;
+	}
+
+	public void setRol(Rol rol) {
+		this.rol = rol;
 	}
 
 	public LocalDateTime getCreatedAt() {
