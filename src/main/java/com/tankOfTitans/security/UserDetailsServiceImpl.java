@@ -2,10 +2,12 @@ package com.tankOfTitans.security;
 
 import com.tankOfTitans.model.entity.Usuario;
 import com.tankOfTitans.repository.UsuarioRepository;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService{
@@ -23,11 +25,12 @@ public class UserDetailsServiceImpl implements UserDetailsService{
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "Usuario no encontrado: " + nickname));
 
-        return new org.springframework.security.core.userdetails.User(
-                usuario.getNickname(),
-                usuario.getPassword(),
-                new ArrayList<>()
-        );
-	}
+		return org.springframework.security.core.userdetails.User
+                .withUsername(usuario.getNickname())
+                .password(usuario.getPassword())
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name())))
+                .build();
+    }
+	
 
 }
