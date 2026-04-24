@@ -147,7 +147,7 @@ public class LobbyServiceImpl implements LobbyService {
                 .findByPartidaIdAndUsuarioId(partidaId, usuarioId)
                 .orElseThrow(() -> new RuntimeException("No estás en esta partida"));
 		
-        jugador.setListo(!jugador.isListo()); // toggle
+        jugador.setListo(!jugador.isListo());
         partidaJugadorRepository.save(jugador);
 	}
 
