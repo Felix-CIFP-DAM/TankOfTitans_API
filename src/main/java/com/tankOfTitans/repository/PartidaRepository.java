@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.tankOfTitans.model.entity.Partida;
 
 public interface PartidaRepository extends JpaRepository<Partida, Long> {
-	List<Partida> finfByPublicaTrue();
-	Optional<Partida> finfByHostId(Long hostId);
+	List<Partida> findByPublicaTrue();
+	Optional<Partida> findByHostId(Long hostId);
 	boolean existsByHostId(Long hostId);
 }

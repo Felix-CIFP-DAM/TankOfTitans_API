@@ -1,6 +1,7 @@
 package com.tankOfTitans.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -150,23 +151,66 @@ public class LobbyServiceImpl implements LobbyService {
         jugador.setListo(!jugador.isListo());
         partidaJugadorRepository.save(jugador);
 	}
-
+	
+	@Transactional
 	@Override
 	public PartidaResponse iniciarPartida(Long usuarioId, Long partidaId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Partida partida = partidaRepository.findById(partidaId)
+                .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+
+        if (!partida.getHost().getId().equals(usuarioId)) {
+            throw new RuntimeException("Solo el host puede iniciar la partida");
+        }
+
+        List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(partidaId);
+
+        if (jugadores.size() < 2) {
+            throw new RuntimeException("Se necesitan 2 jugadores para iniciar");
+        }
+
+        boolean todosListos = jugadores.stream().allMatch(PartidaJugador::isListo);
+        if (!todosListos) {
+            throw new RuntimeException("El invitado no está listo");
+        }
+
+        partida.setEstado(EstadoPartida.EN_CURSO);
+        partidaRepository.save(partida);
+
+        boolean invitadoListo = jugadores.stream()
+                .filter(j -> !j.getUsuario().getId().equals(usuarioId))
+                .anyMatch(PartidaJugador::isListo);
+
+        return toResponse(partida, jugadores.size(), invitadoListo);
 	}
 
 	@Override
 	public List<PartidaResponse> listarPartidasPublicas() {
-		// TODO Auto-generated method stub
-		return null;
+		return partidaRepository.findByPublicaTrue().stream()
+                .filter(p -> p.getEstado().equals(EstadoPartida.ESPERANDO))
+                .map(p -> {
+                    List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(p.getId());
+                    boolean invitadoListo = jugadores.stream()
+                            .filter(j -> !j.getUsuario().getId().equals(p.getHost().getId()))
+                            .anyMatch(PartidaJugador::isListo);
+                    return toResponse(p, jugadores.size(), invitadoListo);
+                })
+                .collect(Collectors.toList());
 	}
 
 	@Override
 	public PartidaResponse getEstadoPartida(Long partidaId) {
-		// TODO Auto-generated method stub
-		return null;
+		Partida partida = partidaRepository.findById(partidaId)
+                .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+
+        List<PartidaJugador> jugadores =
+                partidaJugadorRepository.findByPartidaId(partidaId);
+
+        boolean invitadoListo = jugadores.stream()
+                .filter(j -> !j.getUsuario().getId().equals(partida.getHost().getId()))
+                .anyMatch(PartidaJugador::isListo);
+
+        return toResponse(partida, jugadores.size(), invitadoListo);
 	}
 	
 	private PartidaResponse toResponse(Partida partida, int jugadores, boolean invitadoListo) {
