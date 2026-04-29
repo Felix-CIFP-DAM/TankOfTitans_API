@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.tankOfTitans.model.dto.request.LoginRequest;
 import com.tankOfTitans.model.dto.request.RegisterRequest;
+import com.tankOfTitans.model.dto.response.LoginResponse;
 import com.tankOfTitans.model.entity.Usuario;
-import com.tankOfTitans.model.response.LoginResponse;
 import com.tankOfTitans.repository.UsuarioRepository;
 import com.tankOfTitans.security.JWTUtil;
 import com.tankOfTitans.service.AuthService;

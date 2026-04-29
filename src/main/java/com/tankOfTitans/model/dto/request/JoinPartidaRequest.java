@@ -9,7 +9,6 @@ public class JoinPartidaRequest {
     }
     
     public JoinPartidaRequest(String password) {
-		super();
 		this.password = password;
 	}
 

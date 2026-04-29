@@ -45,6 +45,18 @@ public class Usuario {
 	@Column(nullable = false)
 	private Rol rol = Rol.USER;
 	
+	@Column(nullable = false)
+	private int partidasJugadas = 0;
+
+	@Column(nullable = false)
+	private int victorias = 0;
+
+	@Column(nullable = false)
+	private int derrotas = 0;
+
+	@Column(nullable = false)
+	private int empates = 0;
+	
 	@Column(name = "created_at")
 	   private LocalDateTime createdAt;
 
@@ -134,6 +146,40 @@ public class Usuario {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+
+	public int getPartidasJugadas() {
+		return partidasJugadas;
+	}
+
+	public void setPartidasJugadas(int partidasJugadas) {
+		this.partidasJugadas = partidasJugadas;
+	}
+
+	public int getVictorias() {
+		return victorias;
+	}
+
+	public void setVictorias(int victorias) {
+		this.victorias = victorias;
+	}
+
+	public int getDerrotas() {
+		return derrotas;
+	}
+
+	public void setDerrotas(int derrotas) {
+		this.derrotas = derrotas;
+	}
+
+	public int getEmpates() {
+		return empates;
+	}
+
+	public void setEmpates(int empates) {
+		this.empates = empates;
+	}
+	
+	
 	
 	
 

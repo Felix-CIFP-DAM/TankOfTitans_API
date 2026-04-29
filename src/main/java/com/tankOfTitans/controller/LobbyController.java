@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tankOfTitans.model.dto.request.CreatePartidaRequest;
 import com.tankOfTitans.model.dto.request.JoinPartidaRequest;
-import com.tankOfTitans.model.response.PartidaResponse;
+import com.tankOfTitans.model.dto.response.PartidaResponse;
 import com.tankOfTitans.security.JWTUtil;
 import com.tankOfTitans.service.LobbyService;
 
