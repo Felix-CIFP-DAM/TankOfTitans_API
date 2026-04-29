@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.tankOfTitans.model.dto.request.CreatePartidaRequest;
 import com.tankOfTitans.model.dto.request.JoinPartidaRequest;
+import com.tankOfTitans.model.dto.response.PartidaResponse;
 import com.tankOfTitans.model.entity.Partida;
 import com.tankOfTitans.model.entity.PartidaJugador;
 import com.tankOfTitans.model.entity.Usuario;
 import com.tankOfTitans.model.entity.enums.EstadoPartida;
-import com.tankOfTitans.model.response.PartidaResponse;
 import com.tankOfTitans.repository.PartidaJugadorRepository;
 import com.tankOfTitans.repository.PartidaRepository;
 import com.tankOfTitans.repository.UsuarioRepository;

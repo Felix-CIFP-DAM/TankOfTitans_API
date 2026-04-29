@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.tankOfTitans.model.dto.request.CreatePartidaRequest;
 import com.tankOfTitans.model.dto.request.JoinPartidaRequest;
-import com.tankOfTitans.model.response.PartidaResponse;
+import com.tankOfTitans.model.dto.response.PartidaResponse;
 
 public interface LobbyService {
 	PartidaResponse crearPartida(Long usuarioId, CreatePartidaRequest request);

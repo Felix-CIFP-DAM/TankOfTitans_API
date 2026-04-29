@@ -39,6 +39,19 @@ public class Partida {
     @ManyToOne
     @JoinColumn(name = "host_id", nullable = false)
     private Usuario host;
+    
+    @ManyToOne
+    @JoinColumn(name = "ganador_id")
+    private Usuario ganador;
+
+    @Column(name = "duracion_segundos")
+    private Integer duracionSegundos;
+
+    @Column(name = "tanques_muertos_j1")
+    private int tanquesMuertosJ1 = 0;
+
+    @Column(name = "tanques_muertos_j2")
+    private int tanquesMuertosJ2 = 0;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -105,6 +118,39 @@ public class Partida {
 
 	public void setHost(Usuario host) {
 		this.host = host;
+	}
+	
+	
+	public Usuario getGanador() {
+		return ganador;
+	}
+
+	public void setGanador(Usuario ganador) {
+		this.ganador = ganador;
+	}
+
+	public Integer getDuracionSegundos() {
+		return duracionSegundos;
+	}
+
+	public void setDuracionSegundos(Integer duracionSegundos) {
+		this.duracionSegundos = duracionSegundos;
+	}
+
+	public int getTanquesMuertosJ1() {
+		return tanquesMuertosJ1;
+	}
+
+	public void setTanquesMuertosJ1(int tanquesMuertosJ1) {
+		this.tanquesMuertosJ1 = tanquesMuertosJ1;
+	}
+
+	public int getTanquesMuertosJ2() {
+		return tanquesMuertosJ2;
+	}
+
+	public void setTanquesMuertosJ2(int tanquesMuertosJ2) {
+		this.tanquesMuertosJ2 = tanquesMuertosJ2;
 	}
 
 	public LocalDateTime getCreatedAt() {

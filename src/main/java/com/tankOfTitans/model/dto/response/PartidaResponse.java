@@ -1,4 +1,4 @@
-package com.tankOfTitans.model.response;
+package com.tankOfTitans.model.dto.response;
 
 public class PartidaResponse {
 

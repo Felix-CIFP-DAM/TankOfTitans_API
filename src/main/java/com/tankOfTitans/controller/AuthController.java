@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tankOfTitans.model.dto.request.LoginRequest;
 import com.tankOfTitans.model.dto.request.RegisterRequest;
-import com.tankOfTitans.model.response.LoginResponse;
+import com.tankOfTitans.model.dto.response.LoginResponse;
 import com.tankOfTitans.service.AuthService;
 
 
