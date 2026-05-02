@@ -48,10 +48,14 @@ public class Partida {
     private Integer duracionSegundos;
 
     @Column(name = "tanques_muertos_j1")
-    private int tanquesMuertosJ1 = 0;
+    private Integer tanquesMuertosJ1 = 0;
 
     @Column(name = "tanques_muertos_j2")
-    private int tanquesMuertosJ2 = 0;
+    private Integer tanquesMuertosJ2 = 0;
+    
+    @ManyToOne
+    @JoinColumn(name = "mapa_id")
+    private Mapa mapa;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -137,20 +141,28 @@ public class Partida {
 		this.duracionSegundos = duracionSegundos;
 	}
 
-	public int getTanquesMuertosJ1() {
+	public Integer getTanquesMuertosJ1() {
 		return tanquesMuertosJ1;
 	}
 
-	public void setTanquesMuertosJ1(int tanquesMuertosJ1) {
+	public void setTanquesMuertosJ1(Integer tanquesMuertosJ1) {
 		this.tanquesMuertosJ1 = tanquesMuertosJ1;
 	}
 
-	public int getTanquesMuertosJ2() {
+	public Integer getTanquesMuertosJ2() {
 		return tanquesMuertosJ2;
 	}
 
-	public void setTanquesMuertosJ2(int tanquesMuertosJ2) {
+	public void setTanquesMuertosJ2(Integer tanquesMuertosJ2) {
 		this.tanquesMuertosJ2 = tanquesMuertosJ2;
+	}
+
+	public Mapa getMapa() {
+		return mapa;
+	}
+
+	public void setMapa(Mapa mapa) {
+		this.mapa = mapa;
 	}
 
 	public LocalDateTime getCreatedAt() {

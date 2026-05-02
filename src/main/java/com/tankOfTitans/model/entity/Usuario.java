@@ -57,6 +57,9 @@ public class Usuario {
 	@Column(nullable = false)
 	private int empates = 0;
 	
+	/*@Column(nullable = false)
+	private Long monedas;*/
+	
 	@Column(name = "created_at")
 	   private LocalDateTime createdAt;
 
