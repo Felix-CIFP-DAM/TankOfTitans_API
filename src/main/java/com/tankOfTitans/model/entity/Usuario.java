@@ -75,12 +75,12 @@ public class Usuario {
 	}
 
 	
-	public Usuario(@NotBlank String nombre, @NotBlank String nickname, @NotBlank String password,
-			@Email @NotBlank String email) {
+	public Usuario(@NotBlank String nombre, @NotBlank String nickname,
+			@Email @NotBlank String email, @NotBlank String password) {
 		this.nombre = nombre;
 		this.nickname = nickname;
-		this.password = password;
 		this.email = email;
+		this.password = password;
 		this.rol = rol.USER;
 	}
 	
