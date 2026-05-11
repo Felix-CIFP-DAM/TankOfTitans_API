@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
 
 
 	@Override
-	public String register(RegisterRequest request) {
+	public Usuario register(RegisterRequest request) {
 		if (usuarioRepository.existsByNickname(request.getNickname())) {
             throw new RuntimeException("El nickname ya está en uso");
         }
@@ -52,11 +52,10 @@ public class AuthServiceImpl implements AuthService {
         Usuario user = new Usuario(
                 request.getNombre(),
                 request.getNickname(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(request.getPassword()),
+                request.getEmail()
         );
 
-        usuarioRepository.save(user);
-        return "Usuario registrado correctamente";
+        return usuarioRepository.save(user);
 	}
 }
