@@ -60,6 +60,9 @@ public class Usuario {
 	/*@Column(nullable = false)
 	private Long monedas;*/
 	
+	@Column(length = 100)
+	private String icono = "default.png";
+	
 	@Column(name = "created_at")
 	   private LocalDateTime createdAt;
 
@@ -181,9 +184,16 @@ public class Usuario {
 	public void setEmpates(int empates) {
 		this.empates = empates;
 	}
-	
-	
-	
-	
 
+
+	public String getIcono() {
+		return icono;
+	}
+
+
+	public void setIcono(String icono) {
+		this.icono = icono;
+	}
+		
+	
 }
