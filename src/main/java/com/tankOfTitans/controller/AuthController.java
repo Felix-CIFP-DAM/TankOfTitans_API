@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tankOfTitans.model.dto.request.LoginRequest;
 import com.tankOfTitans.model.dto.request.RegisterRequest;
 import com.tankOfTitans.model.dto.response.LoginResponse;
+import com.tankOfTitans.model.entity.Usuario;
 import com.tankOfTitans.service.AuthService;
+
 
 
 import jakarta.validation.Valid;
@@ -24,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<Usuario> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 

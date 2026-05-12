@@ -1,10 +1,13 @@
 package com.tankOfTitans.model.entity;
 
-
 import java.time.LocalDateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.tankOfTitans.model.entity.enums.Rol;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,8 +15,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -21,30 +26,29 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "usuario")
 public class Usuario {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-  
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	@NotBlank
-    @Column(name = "nombre", unique = false, nullable = false, length = 50)
-    private String nombre;
-	
+	@Column(name = "nombre", unique = false, nullable = false, length = 50)
+	private String nombre;
+
 	@NotBlank
-    @Column(name = "nickname", unique = true, nullable = false, length = 50)
-    private String nickname;
-	
+	@Column(name = "nickname", unique = true, nullable = false, length = 50)
+	private String nickname;
+
 	@NotBlank
 	@Column(nullable = false)
-    private String password;
-	
-	@Email
-    @NotBlank
-    @Column(unique = true, nullable = false, length = 100)
-    private String email;
-	
+	private String password;
+
+	@NotBlank
+	@Column(unique = true, nullable = false, length = 100)
+	private String email;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Rol rol = Rol.USER;
-	
+
 	@Column(nullable = false)
 	private int partidasJugadas = 0;
 
@@ -56,46 +60,47 @@ public class Usuario {
 
 	@Column(nullable = false)
 	private int empates = 0;
-	
-	/*@Column(nullable = false)
-	private Long monedas;*/
-	
-	@Column(length = 100)
-	private String icono = "default.png";
-	
+
+	@Column(nullable = false)
+	private long monedas = 1000; // Monedas iniciales para comprar tanques
+
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<UsuarioTanque> tanques = new ArrayList<>();
+
+
+	@Column(nullable = false)
+	private int icono = 0;
+
 	@Column(name = "created_at")
-	   private LocalDateTime createdAt;
+	private LocalDateTime createdAt;
 
 	@PrePersist
 	public void prePersist() {
 		this.createdAt = LocalDateTime.now();
 	}
-	
-	
 
 	public Usuario() {
-		
+
 	}
 
-	
 	public Usuario(@NotBlank String nombre, @NotBlank String nickname,
-			@Email @NotBlank String email, @NotBlank String password) {
+			@NotBlank String password, @NotBlank String email) {
 		this.nombre = nombre;
 		this.nickname = nickname;
-		this.email = email;
 		this.password = password;
-		this.rol = rol.USER;
+		this.email = email;
+		this.rol = Rol.USER;
 	}
-	
+
+
+
 	public Usuario(String nombre, String nickname, String password, String email, Rol rol) {
-        this.nombre = nombre;
-        this.nickname = nickname;
-        this.password = password;
-        this.email = email;
-        this.rol = rol;
-    }
-
-
+		this.nombre = nombre;
+		this.nickname = nickname;
+		this.password = password;
+		this.email = email;
+		this.rol = rol;
+	}
 
 	public Long getId() {
 		return id;
@@ -136,7 +141,7 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	public Rol getRol() {
 		return rol;
 	}
@@ -185,15 +190,28 @@ public class Usuario {
 		this.empates = empates;
 	}
 
-
-	public String getIcono() {
+	public int getIcono() {
 		return icono;
 	}
 
-
-	public void setIcono(String icono) {
+	public void setIcono(int icono) {
 		this.icono = icono;
 	}
-		
-	
+
+	public long getMonedas() {
+		return monedas;
+	}
+
+	public void setMonedas(long monedas) {
+		this.monedas = monedas;
+	}
+
+	public List<UsuarioTanque> getTanques() {
+		return tanques;
+	}
+
+	public void setTanques(List<UsuarioTanque> tanques) {
+		this.tanques = tanques;
+	}
 }
+

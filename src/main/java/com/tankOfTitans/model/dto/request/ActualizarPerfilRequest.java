@@ -2,14 +2,14 @@ package com.tankOfTitans.model.dto.request;
 
 public class ActualizarPerfilRequest {
 	private Long usuarioId;
-    private String nombre;
-    private String nickname;
-    private String email;
-    private String contrasena;
-    private String icono;
-    
+	private String nombre;
+	private String nickname;
+	private String email;
+	private String contrasena;
+	private int icono;
+
 	public ActualizarPerfilRequest() {
-		
+
 	}
 
 	public Long getUsuarioId() {
@@ -52,15 +52,12 @@ public class ActualizarPerfilRequest {
 		this.contrasena = contrasena;
 	}
 
-	public String getIcono() {
+	public int getIcono() {
 		return icono;
 	}
 
-	public void setIcono(String icono) {
+	public void setIcono(int icono) {
 		this.icono = icono;
 	}
-	
-	
-    
-    
+
 }

@@ -2,27 +2,32 @@ package com.tankOfTitans.model.dto.response;
 
 public class PerfilResponse {
 	private Long id;
-    private String nombre;
-    private String nickname;
-    private String email;
-    private String icono;
-    private int partidasJugadas;
-    private int victorias;
-    private int derrotas;
-    private int empates;
-    
+	private String nombre;
+	private String nickname;
+	private String email;
+	private int icono;
+	private String iconoImagen;
+	private int partidasJugadas;
+
+	private int victorias;
+	private int derrotas;
+	private int empates;
+
 	public PerfilResponse() {
-		
+
 	}
 
-	public PerfilResponse(Long id, String nombre, String nickname, String email, String icono, int partidasJugadas,
-			int victorias, int derrotas, int empates) {
+	public PerfilResponse(Long id, String nombre, String nickname, String email, int icono, String iconoImagen,
+			int partidasJugadas, int victorias, int derrotas, int empates) {
+
 		this.id = id;
 		this.nombre = nombre;
 		this.nickname = nickname;
 		this.email = email;
 		this.icono = icono;
+		this.iconoImagen = iconoImagen;
 		this.partidasJugadas = partidasJugadas;
+
 		this.victorias = victorias;
 		this.derrotas = derrotas;
 		this.empates = empates;
@@ -60,13 +65,22 @@ public class PerfilResponse {
 		this.email = email;
 	}
 
-	public String getIcono() {
+	public int getIcono() {
 		return icono;
 	}
 
-	public void setIcono(String icono) {
+	public void setIcono(int icono) {
 		this.icono = icono;
 	}
+
+	public String getIconoImagen() {
+		return iconoImagen;
+	}
+
+	public void setIconoImagen(String iconoImagen) {
+		this.iconoImagen = iconoImagen;
+	}
+
 
 	public int getPartidasJugadas() {
 		return partidasJugadas;
@@ -99,10 +113,5 @@ public class PerfilResponse {
 	public void setEmpates(int empates) {
 		this.empates = empates;
 	}
-	
-	
-	
-	
-    
-    
+
 }
