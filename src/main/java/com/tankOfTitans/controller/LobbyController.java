@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tankOfTitans.model.dto.request.CreatePartidaRequest;
 import com.tankOfTitans.model.dto.request.JoinPartidaRequest;
+import com.tankOfTitans.model.dto.request.UsuarioIdRequest;
 import com.tankOfTitans.model.dto.response.PartidaResponse;
 import com.tankOfTitans.security.JWTUtil;
 import com.tankOfTitans.service.LobbyService;
@@ -38,106 +39,96 @@ public class LobbyController {
         return jwtUtil.extractUserId(token);
     }
 	
-	// Crear partida
+    // Crear partida
     @PostMapping("/crear")
     public ResponseEntity<PartidaResponse> crearPartida(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody java.util.Map<String, Object> body) {
+            @RequestBody CreatePartidaRequest request) {
         
-        System.out.println("[JAVA][LobbyController] Raw Body Crear: " + body);
-        String tokenNickname = jwtUtil.extractNickname(authHeader.substring(7));
-        System.out.println("[JAVA][LobbyController] 🔐 Token extraído de: " + tokenNickname);
+        System.out.println("[JAVA][LobbyController] 🚀 crearPartida para usuarioId: " + request.getUsuarioId());
         
-        Long userId = body.get("usuarioId") != null ? Long.valueOf(body.get("usuarioId").toString()) : null;
-        if (userId == null) {
-            System.out.println("[JAVA][LobbyController] ⚠️ WARNING: usuarioId no viene en el body de crearPartida. Fallback al token.");
-            userId = getUserIdFromToken(authHeader);
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para crear una partida");
         }
         
-        // Mapear manualmente el resto del DTO
-        CreatePartidaRequest request = new CreatePartidaRequest();
-        request.setNombre((String) body.get("nombre"));
-        request.setPublica(body.get("publica") != null && (boolean) body.get("publica"));
-        request.setPassword((String) body.get("password"));
-        request.setUsuarioId(userId);
-
-        System.out.println("[JAVA][LobbyController] 🚀 crearPartida FINAL para userId: " + userId);
-        return ResponseEntity.ok(lobbyService.crearPartida(userId, request));
+        return ResponseEntity.ok(lobbyService.crearPartida(request.getUsuarioId(), request));
     }
 
     // Listar partidas públicas en espera
     @GetMapping("/partidas")
     public ResponseEntity<List<PartidaResponse>> listarPartidas() {
-        return ResponseEntity.ok(lobbyService.listarPartidasPublicas());
+        return ResponseEntity.ok(lobbyService.listarPartidasDisponibles());
     }
     
- // Ver estado de una partida concreta
+    // Ver estado de una partida concreta
     @GetMapping("/partidas/{partidaId}")
     public ResponseEntity<PartidaResponse> getEstadoPartida(
             @PathVariable Long partidaId) {
         return ResponseEntity.ok(lobbyService.getEstadoPartida(partidaId));
     }
     
- // Unirse a una partida
+    // Unirse a una partida
     @PostMapping("/unirse/{partidaId}")
     public ResponseEntity<PartidaResponse> unirseAPartida(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long partidaId,
-            @RequestBody(required = false) java.util.Map<String, Object> body) {
+            @RequestBody JoinPartidaRequest request) {
         
-        System.out.println("[JAVA][LobbyController] Raw Body Unirse: " + body);
-        String tokenNickname = jwtUtil.extractNickname(authHeader.substring(7));
-        System.out.println("[JAVA][LobbyController] 🔐 Token extraído de: " + tokenNickname);
+        System.out.println("[JAVA][LobbyController] 🚀 unirseAPartida para usuarioId: " + request.getUsuarioId() + " en partida: " + partidaId);
 
-        Long userId = (body != null && body.get("usuarioId") != null) ? Long.valueOf(body.get("usuarioId").toString()) : null;
-        if (userId == null) {
-            System.out.println("[JAVA][LobbyController] ⚠️ WARNING: usuarioId no viene en el body de unirseAPartida. Fallback al token.");
-            userId = getUserIdFromToken(authHeader);
-        }
-        
-        JoinPartidaRequest request = new JoinPartidaRequest();
-        if (body != null) {
-            request.setUsuarioId(userId);
-            request.setPassword((String) body.get("password"));
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para unirse a una partida");
         }
 
-        System.out.println("[JAVA][LobbyController] 🚀 unirseAPartida FINAL para userId: " + userId + " en partida: " + partidaId);
-        return ResponseEntity.ok(lobbyService.unirseAPartida(userId, partidaId, request));
+        return ResponseEntity.ok(lobbyService.unirseAPartida(request.getUsuarioId(), partidaId, request));
     }
     
     // Marcar listo / no listo (toggle)
     @PutMapping("/listo/{partidaId}")
     public ResponseEntity<String> marcarListo(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long partidaId,
-            @RequestBody(required = false) java.util.Map<String, Object> body) {
+            @RequestBody UsuarioIdRequest request) {
         
-        Long userId = (body != null && body.containsKey("usuarioId")) ? Long.valueOf(body.get("usuarioId").toString()) : null;
-        if (userId == null) {
-            userId = getUserIdFromToken(authHeader);
+        System.out.println("[JAVA][LobbyController] 🚀 marcarListo para usuarioId: " + request.getUsuarioId());
+        
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para marcar como listo");
         }
-        System.out.println("[JAVA][LobbyController] 🚀 marcarListo para userId: " + userId);
-        lobbyService.marcarListo(userId, partidaId);
+
+        lobbyService.marcarListo(request.getUsuarioId(), partidaId);
         return ResponseEntity.ok("Estado de listo actualizado");
     }
     
- // Eliminar partida (solo el host)
+    // Iniciar partida
+    @PutMapping("/iniciar/{partidaId}")
+    public ResponseEntity<PartidaResponse> iniciarPartida(
+            @PathVariable Long partidaId,
+            @RequestBody UsuarioIdRequest request) {
+        
+        System.out.println("[JAVA][LobbyController] 🚀 iniciarPartida para usuarioId: " + request.getUsuarioId());
+        
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para iniciar la partida");
+        }
+
+        return ResponseEntity.ok(lobbyService.iniciarPartida(request.getUsuarioId(), partidaId));
+    }
+
+    // Eliminar partida (solo el host)
     @DeleteMapping("/eliminar/{partidaId}")
     public ResponseEntity<String> eliminarPartida(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long partidaId,
-            @RequestBody(required = false) java.util.Map<String, Object> body) {
+            @RequestBody UsuarioIdRequest request) {
         
-        Long userId = (body != null && body.containsKey("usuarioId")) ? Long.valueOf(body.get("usuarioId").toString()) : null;
-        if (userId == null) {
-            userId = getUserIdFromToken(authHeader);
+        System.out.println("[JAVA][LobbyController] 🚀 eliminarPartida para usuarioId: " + request.getUsuarioId());
+        
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para eliminar la partida");
         }
-        System.out.println("[JAVA][LobbyController] 🚀 eliminarPartida para userId: " + userId);
-        lobbyService.eliminarPartida(userId, partidaId);
+
+        lobbyService.eliminarPartida(request.getUsuarioId(), partidaId);
         return ResponseEntity.ok("Partida eliminada correctamente");
     }
     
- // Cambiar host (cuando el host se desconecta)
+    // Cambiar host (cuando el host se desconecta)
     @PutMapping("/cambiarHost/{partidaId}/{hostActualId}")
     public ResponseEntity<String> cambiarHost(
             @PathVariable Long partidaId,
@@ -152,5 +143,23 @@ public class LobbyController {
         return ResponseEntity.ok(usuarioRepository.findAll().stream()
                 .map(u -> u.getNickname() + " (ID: " + u.getId() + ")")
                 .collect(java.util.stream.Collectors.toList()));
+    }
+
+    // Seleccionar tanque
+    @PostMapping("/seleccionarTanque/{partidaId}")
+    public ResponseEntity<String> seleccionarTanque(
+            @PathVariable Long partidaId,
+            @RequestBody com.tankOfTitans.model.dto.request.SeleccionarTanqueRequest request) {
+        lobbyService.seleccionarTanque(request.getUsuarioId(), partidaId, request.getTanqueId());
+        return ResponseEntity.ok("Tanque seleccionado");
+    }
+
+    // Deseleccionar tanque
+    @PostMapping("/deseleccionarTanque/{partidaId}")
+    public ResponseEntity<String> deseleccionarTanque(
+            @PathVariable Long partidaId,
+            @RequestBody com.tankOfTitans.model.dto.request.SeleccionarTanqueRequest request) {
+        lobbyService.deseleccionarTanque(request.getUsuarioId(), partidaId, request.getTanqueId());
+        return ResponseEntity.ok("Tanque deseleccionado");
     }
 }

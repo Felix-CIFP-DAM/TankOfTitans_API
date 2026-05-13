@@ -48,28 +48,27 @@ public class PartidaServiceImpl implements PartidaService {
         Partida partida = partidaRepository.findById(partidaId)
                 .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
 
-        // Borramos los tanques anteriores y guardamos el estado actual
-        partidaTanqueRepository.deleteByPartidaJugadorPartidaId(partidaId);
-
         int tanquesMuertosJ1 = 0;
         int tanquesMuertosJ2 = 0;
         boolean esJ1 = true;
 
         for (JugadorEstadoDTO jugadorDTO : request.getJugadores()) {
-            PartidaJugador partidaJugador = partidaJugadorRepository
+            PartidaJugador pj = partidaJugadorRepository
                     .findByPartidaIdAndUsuarioId(partidaId, jugadorDTO.getUsuarioId())
                     .orElseThrow(() -> new RuntimeException("Jugador no encontrado en la partida"));
 
+            List<PartidaTanque> tanquesActuales = partidaTanqueRepository.findByPartidaJugadorId(pj.getId());
+
             for (TanqueEstadoDTO tanqueDTO : jugadorDTO.getTanques()) {
-                PartidaTanque tanque = new PartidaTanque();
-                tanque.setNumeroTanque(tanqueDTO.getNumeroTanque());
-                tanque.setTipo(tanqueDTO.getTipo());
-                tanque.setHp(tanqueDTO.getHp());
-                tanque.setVivo(tanqueDTO.isVivo());
-                tanque.setPosX(tanqueDTO.getPosX());
-                tanque.setPosY(tanqueDTO.getPosY());
-                tanque.setPartidaJugador(partidaJugador);
-                partidaTanqueRepository.save(tanque);
+                PartidaTanque pt = tanquesActuales.stream()
+                        .filter(t -> t.getNumeroTanque() == tanqueDTO.getNumeroTanque())
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Tanque #" + tanqueDTO.getNumeroTanque() + " no encontrado para el jugador"));
+                
+                pt.setVivo(tanqueDTO.isVivo());
+                pt.setPosX(tanqueDTO.getPosX());
+                pt.setPosY(tanqueDTO.getPosY());
+                partidaTanqueRepository.save(pt);
             }
 
             int muertos = (int) jugadorDTO.getTanques().stream()
@@ -106,8 +105,8 @@ public class PartidaServiceImpl implements PartidaService {
             List<TanqueEstadoDTO> tanquesDTO = tanques.stream()
                     .map(t -> new TanqueEstadoDTO(
                             t.getNumeroTanque(),
-                            t.getTipo(),
-                            t.getHp(),
+                            t.getTanque().getTipo(),
+                            t.getTanque().getHp(), // HP base, ya que se quitó hp de la tabla
                             t.isVivo(),
                             t.getPosX(),
                             t.getPosY()

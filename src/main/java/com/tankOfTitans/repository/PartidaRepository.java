@@ -8,6 +8,7 @@ import com.tankOfTitans.model.entity.Partida;
 
 public interface PartidaRepository extends JpaRepository<Partida, Long> {
 	List<Partida> findByPublicaTrue();
+    List<Partida> findByEstado(com.tankOfTitans.model.entity.enums.EstadoPartida estado);
 	Optional<Partida> findByHostId(Long hostId);
 	boolean existsByHostId(Long hostId);
 }

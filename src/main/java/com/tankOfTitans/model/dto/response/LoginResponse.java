@@ -9,12 +9,13 @@ public class LoginResponse {
     private String message;
     private int icono;
     private String iconoImagen;
+    private String rol;
 
     
 	public LoginResponse() {	
 	}
 
-	public LoginResponse(String token, Long userId, String nombre, String nickname, String message, int icono, String iconoImagen) {
+	public LoginResponse(String token, Long userId, String nombre, String nickname, String message, int icono, String iconoImagen, String rol) {
 		super();
 		this.token = token;
 		this.userId = userId;
@@ -24,6 +25,7 @@ public class LoginResponse {
 		this.message = message;
 		this.icono = icono;
 		this.iconoImagen = iconoImagen;
+		this.rol = rol;
 	}
 
 
@@ -82,6 +84,14 @@ public class LoginResponse {
 
 	public void setIconoImagen(String iconoImagen) {
 		this.iconoImagen = iconoImagen;
+	}
+
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 
 	

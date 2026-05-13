@@ -33,7 +33,7 @@ public class PartidaJugador {
 	public PartidaJugador(Partida partida, Usuario usuario, boolean listo) {
 		this.partida = partida;
 		this.usuario = usuario;
-		this.listo = false;
+		this.listo = listo;
 	}
 
 	public Long getId() {

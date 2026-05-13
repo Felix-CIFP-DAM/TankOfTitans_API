@@ -10,6 +10,8 @@ public interface PartidaJugadorRepository extends JpaRepository<PartidaJugador, 
 	List<PartidaJugador> findByPartidaId(Long partidaId);
     Optional<PartidaJugador> findByPartidaIdAndUsuarioId(Long partidaId, Long usuarioId);
     boolean existsByUsuarioId(Long usuarioId);
+    @org.springframework.data.jpa.repository.Modifying
+    @jakarta.transaction.Transactional
     void deleteByPartidaId(Long partidaId);
 
 }
