@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +28,10 @@ public class Mapa {
 
     @Column(nullable = false)
     private int alto = 8;
+
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(columnDefinition = "json")
+	private MapData data;
 
     @OneToMany(mappedBy = "mapa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Casilla> casillas;
@@ -77,6 +83,14 @@ public class Mapa {
 
 	public void setCasillas(List<Casilla> casillas) {
 		this.casillas = casillas;
+	}
+
+	public MapData getData() {
+		return data;
+	}
+
+	public void setData(MapData data) {
+		this.data = data;
 	}
 	
 	

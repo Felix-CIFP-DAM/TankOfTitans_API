@@ -2,6 +2,7 @@ package com.tankOfTitans.model.dto.response;
 
 import java.util.List;
 import com.tankOfTitans.model.dto.CasillaDTO;
+import com.tankOfTitans.model.entity.MapData;
 
 public class MapaResponse {
 	private Long id;
@@ -9,17 +10,19 @@ public class MapaResponse {
     private int ancho;
     private int alto;
     private List<CasillaDTO> casillas;
+	private MapData data;
     
 	public MapaResponse() {
 
 	}
 
-	public MapaResponse(Long id, String nombre, int ancho, int alto, List<CasillaDTO> casillas) {
+	public MapaResponse(Long id, String nombre, int ancho, int alto, List<CasillaDTO> casillas, MapData data) {
 		this.id = id;
 		this.nombre = nombre;
 		this.ancho = ancho;
 		this.alto = alto;
 		this.casillas = casillas;
+		this.data = data;
 	}
 
 	public Long getId() {
@@ -61,10 +64,12 @@ public class MapaResponse {
 	public void setCasillas(List<CasillaDTO> casillas) {
 		this.casillas = casillas;
 	}
-	
-	
-	
-	
-    
-    
+
+	public MapData getData() {
+		return data;
+	}
+
+	public void setData(MapData data) {
+		this.data = data;
+	}
 }

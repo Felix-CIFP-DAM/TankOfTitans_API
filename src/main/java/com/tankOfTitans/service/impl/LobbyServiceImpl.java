@@ -25,14 +25,16 @@ public class LobbyServiceImpl implements LobbyService {
 	 private final PartidaRepository partidaRepository;
 	 private final PartidaJugadorRepository partidaJugadorRepository;
 	 private final UsuarioRepository usuarioRepository;
+	 private final AvatarRepository avatarRepository;
 	 
 	 
 
 	public LobbyServiceImpl(PartidaRepository partidaRepository, PartidaJugadorRepository partidaJugadorRepository,
-			UsuarioRepository usuarioRepository) {
+			UsuarioRepository usuarioRepository, AvatarRepository avatarRepository) {
 		this.partidaRepository = partidaRepository;
 		this.partidaJugadorRepository = partidaJugadorRepository;
 		this.usuarioRepository = usuarioRepository;
+		this.avatarRepository = avatarRepository;
 	}
 
 	@Override
@@ -44,6 +46,7 @@ public class LobbyServiceImpl implements LobbyService {
 
 	        Usuario host = usuarioRepository.findById(usuarioId)
 	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+	        System.out.println("[JAVA][LobbyService] crearPartida - Host encontrado: " + host.getNickname() + " (ID: " + host.getId() + ")");
 
 	        Partida partida = new Partida(
 	                request.getNombre(),
@@ -52,13 +55,14 @@ public class LobbyServiceImpl implements LobbyService {
 	                host
 	        );
 	        partidaRepository.save(partida);
+	        System.out.println("[JAVA][LobbyService] crearPartida - Partida guardada con ID: " + partida.getId());
 
 	        // El host entra automáticamente como jugador
 	        PartidaJugador jugador = new PartidaJugador(partida, host, false);
 	        jugador.setListo(true);
 	        partidaJugadorRepository.save(jugador);
 
-	        return toResponse(partida, 1, false);
+	        return toResponse(partida, List.of(jugador));
 
 	}
 
@@ -74,8 +78,10 @@ public class LobbyServiceImpl implements LobbyService {
         }
 
         List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(partidaId);
+        System.out.println("[JAVA][LobbyService] unirseAPartida - Jugadores actuales: " + jugadores.size());
 
         if (jugadores.size() >= 2) {
+            System.out.println("[JAVA][LobbyService] unirseAPartida - ERROR: Partida llena");
             throw new RuntimeException("La partida ya está llena");
         }
 
@@ -88,6 +94,7 @@ public class LobbyServiceImpl implements LobbyService {
 
         boolean yaEsta = jugadores.stream()
                 .anyMatch(j -> j.getUsuario().getId().equals(usuarioId));
+        System.out.println("[JAVA][LobbyService] unirseAPartida - yaEsta: " + yaEsta + " para usuarioId: " + usuarioId);
         if (yaEsta) {
             throw new RuntimeException("Ya estás en esta partida");
         }
@@ -98,7 +105,8 @@ public class LobbyServiceImpl implements LobbyService {
         PartidaJugador jugador = new PartidaJugador(partida, usuario, false);
         partidaJugadorRepository.save(jugador);
 
-        return toResponse(partida, jugadores.size() + 1, false);
+        jugadores.add(jugador); // Add the new player to the list before returning
+        return toResponse(partida, jugadores);
 	}
 	
 	//OJO CON ESTO, ES POSIBLE QUE NECESITEMOS LA PARTIDA PARA LAS ESTADÍSTICAS DEL MONGO
@@ -181,7 +189,7 @@ public class LobbyServiceImpl implements LobbyService {
                 .filter(j -> !j.getUsuario().getId().equals(usuarioId))
                 .anyMatch(PartidaJugador::isListo);
 
-        return toResponse(partida, jugadores.size(), invitadoListo);
+        return toResponse(partida, jugadores);
 	}
 
 	@Override
@@ -190,10 +198,7 @@ public class LobbyServiceImpl implements LobbyService {
                 .filter(p -> p.getEstado().equals(EstadoPartida.ESPERANDO))
                 .map(p -> {
                     List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(p.getId());
-                    boolean invitadoListo = jugadores.stream()
-                            .filter(j -> !j.getUsuario().getId().equals(p.getHost().getId()))
-                            .anyMatch(PartidaJugador::isListo);
-                    return toResponse(p, jugadores.size(), invitadoListo);
+                    return toResponse(p, jugadores);
                 })
                 .collect(Collectors.toList());
 	}
@@ -206,23 +211,39 @@ public class LobbyServiceImpl implements LobbyService {
         List<PartidaJugador> jugadores =
                 partidaJugadorRepository.findByPartidaId(partidaId);
 
-        boolean invitadoListo = jugadores.stream()
-                .filter(j -> !j.getUsuario().getId().equals(partida.getHost().getId()))
-                .anyMatch(PartidaJugador::isListo);
-
-        return toResponse(partida, jugadores.size(), invitadoListo);
+        return toResponse(partida, jugadores);
 	}
 	
-	private PartidaResponse toResponse(Partida partida, int jugadores, boolean invitadoListo) {
-        return new PartidaResponse(
-                partida.getId(),
-                partida.getNombre(),
-                partida.isPublica(),
-                partida.getEstado().name(),
-                partida.getHost().getNickname(),
-                jugadores,
-                invitadoListo
-        );
-    }
+	private PartidaResponse toResponse(Partida partida, List<PartidaJugador> jugadores) {
+		List<JugadorLobbyDTO> jugadoresDTO = jugadores.stream()
+				.map(j -> {
+					String iconoImagen = avatarRepository.findById((long) j.getUsuario().getIcono())
+							.map(avatar -> avatar.getImagen())
+							.orElse("recluta.png");
 
+					return new JugadorLobbyDTO(
+							j.getUsuario().getId(),
+							j.getUsuario().getNickname(),
+							j.getUsuario().getIcono(),
+							iconoImagen,
+							j.isListo()
+					);
+				})
+				.collect(Collectors.toList());
+
+		boolean invitadoListo = jugadores.stream()
+				.filter(j -> !j.getUsuario().getId().equals(partida.getHost().getId()))
+				.anyMatch(PartidaJugador::isListo);
+
+		return new PartidaResponse(
+				partida.getId(),
+				partida.getNombre(),
+				partida.isPublica(),
+				partida.getEstado().name(),
+				partida.getHost().getNickname(),
+				jugadores.size(),
+				invitadoListo,
+				jugadoresDTO
+		);
+	}
 }

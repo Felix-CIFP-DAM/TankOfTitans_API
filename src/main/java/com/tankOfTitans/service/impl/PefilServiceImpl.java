@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.tankOfTitans.model.dto.request.ActualizarPerfilRequest;
 import com.tankOfTitans.model.dto.response.PerfilResponse;
+import com.tankOfTitans.model.dto.response.TanqueResponse;
 import com.tankOfTitans.model.entity.Usuario;
 import com.tankOfTitans.repository.AvatarRepository;
 import com.tankOfTitans.repository.UsuarioRepository;
@@ -12,6 +13,8 @@ import com.tankOfTitans.repository.UsuarioRepository;
 import com.tankOfTitans.service.PerfilService;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PefilServiceImpl implements PerfilService {
@@ -78,6 +81,31 @@ public class PefilServiceImpl implements PerfilService {
 
 		usuarioRepository.save(usuario);
 		return toResponse(usuario);
+	}
+
+	@Override
+	public List<TanqueResponse> obtenerTanquesUsuario(Long usuarioId) {
+		Usuario usuario = usuarioRepository.findById(usuarioId)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+		return usuario.getTanques().stream()
+				.map(ut -> {
+					var t = ut.getTanque();
+					return new TanqueResponse(
+							t.getId(),
+							t.getNombre(),
+							t.getTipo(),
+							t.getHp(),
+							t.getAtaque(),
+							t.getDefensa(),
+							t.getRangoMovimiento(),
+							t.getRangoAtaque(),
+							t.getPrecio(),
+							t.getImagenPortada(),
+							t.getMiniatura()
+					);
+				})
+				.collect(Collectors.toList());
 	}
 
 	private PerfilResponse toResponse(Usuario usuario) {

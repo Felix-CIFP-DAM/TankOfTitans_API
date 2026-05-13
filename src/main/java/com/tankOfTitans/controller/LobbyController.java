@@ -22,13 +22,15 @@ import com.tankOfTitans.service.LobbyService;
 @RestController
 @RequestMapping("/api/lobby")
 public class LobbyController {
-	private final LobbyService lobbyService;
+    private final LobbyService lobbyService;
     private final JWTUtil jwtUtil;
+    private final com.tankOfTitans.repository.UsuarioRepository usuarioRepository;
     
-	public LobbyController(LobbyService lobbyService, JWTUtil jwtUtil) {
+	public LobbyController(LobbyService lobbyService, JWTUtil jwtUtil, com.tankOfTitans.repository.UsuarioRepository usuarioRepository) {
 		super();
 		this.lobbyService = lobbyService;
 		this.jwtUtil = jwtUtil;
+        this.usuarioRepository = usuarioRepository;
 	}
     
 	private Long getUserIdFromToken(String authHeader) {
@@ -40,8 +42,26 @@ public class LobbyController {
     @PostMapping("/crear")
     public ResponseEntity<PartidaResponse> crearPartida(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody CreatePartidaRequest request) {
-        Long userId = getUserIdFromToken(authHeader);
+            @RequestBody java.util.Map<String, Object> body) {
+        
+        System.out.println("[JAVA][LobbyController] Raw Body Crear: " + body);
+        String tokenNickname = jwtUtil.extractNickname(authHeader.substring(7));
+        System.out.println("[JAVA][LobbyController] 🔐 Token extraído de: " + tokenNickname);
+        
+        Long userId = body.get("usuarioId") != null ? Long.valueOf(body.get("usuarioId").toString()) : null;
+        if (userId == null) {
+            System.out.println("[JAVA][LobbyController] ⚠️ WARNING: usuarioId no viene en el body de crearPartida. Fallback al token.");
+            userId = getUserIdFromToken(authHeader);
+        }
+        
+        // Mapear manualmente el resto del DTO
+        CreatePartidaRequest request = new CreatePartidaRequest();
+        request.setNombre((String) body.get("nombre"));
+        request.setPublica(body.get("publica") != null && (boolean) body.get("publica"));
+        request.setPassword((String) body.get("password"));
+        request.setUsuarioId(userId);
+
+        System.out.println("[JAVA][LobbyController] 🚀 crearPartida FINAL para userId: " + userId);
         return ResponseEntity.ok(lobbyService.crearPartida(userId, request));
     }
 
@@ -63,8 +83,25 @@ public class LobbyController {
     public ResponseEntity<PartidaResponse> unirseAPartida(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long partidaId,
-            @RequestBody(required = false) JoinPartidaRequest request) {
-        Long userId = getUserIdFromToken(authHeader);
+            @RequestBody(required = false) java.util.Map<String, Object> body) {
+        
+        System.out.println("[JAVA][LobbyController] Raw Body Unirse: " + body);
+        String tokenNickname = jwtUtil.extractNickname(authHeader.substring(7));
+        System.out.println("[JAVA][LobbyController] 🔐 Token extraído de: " + tokenNickname);
+
+        Long userId = (body != null && body.get("usuarioId") != null) ? Long.valueOf(body.get("usuarioId").toString()) : null;
+        if (userId == null) {
+            System.out.println("[JAVA][LobbyController] ⚠️ WARNING: usuarioId no viene en el body de unirseAPartida. Fallback al token.");
+            userId = getUserIdFromToken(authHeader);
+        }
+        
+        JoinPartidaRequest request = new JoinPartidaRequest();
+        if (body != null) {
+            request.setUsuarioId(userId);
+            request.setPassword((String) body.get("password"));
+        }
+
+        System.out.println("[JAVA][LobbyController] 🚀 unirseAPartida FINAL para userId: " + userId + " en partida: " + partidaId);
         return ResponseEntity.ok(lobbyService.unirseAPartida(userId, partidaId, request));
     }
     
@@ -72,8 +109,14 @@ public class LobbyController {
     @PutMapping("/listo/{partidaId}")
     public ResponseEntity<String> marcarListo(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long partidaId) {
-        Long userId = getUserIdFromToken(authHeader);
+            @PathVariable Long partidaId,
+            @RequestBody(required = false) java.util.Map<String, Object> body) {
+        
+        Long userId = (body != null && body.containsKey("usuarioId")) ? Long.valueOf(body.get("usuarioId").toString()) : null;
+        if (userId == null) {
+            userId = getUserIdFromToken(authHeader);
+        }
+        System.out.println("[JAVA][LobbyController] 🚀 marcarListo para userId: " + userId);
         lobbyService.marcarListo(userId, partidaId);
         return ResponseEntity.ok("Estado de listo actualizado");
     }
@@ -82,8 +125,14 @@ public class LobbyController {
     @DeleteMapping("/eliminar/{partidaId}")
     public ResponseEntity<String> eliminarPartida(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long partidaId) {
-        Long userId = getUserIdFromToken(authHeader);
+            @PathVariable Long partidaId,
+            @RequestBody(required = false) java.util.Map<String, Object> body) {
+        
+        Long userId = (body != null && body.containsKey("usuarioId")) ? Long.valueOf(body.get("usuarioId").toString()) : null;
+        if (userId == null) {
+            userId = getUserIdFromToken(authHeader);
+        }
+        System.out.println("[JAVA][LobbyController] 🚀 eliminarPartida para userId: " + userId);
         lobbyService.eliminarPartida(userId, partidaId);
         return ResponseEntity.ok("Partida eliminada correctamente");
     }
@@ -95,5 +144,13 @@ public class LobbyController {
             @PathVariable Long hostActualId) {
         lobbyService.cambiarHost(partidaId, hostActualId);
         return ResponseEntity.ok("Host cambiado correctamente");
+    }
+
+    // Debug: Listar todos los usuarios para ver sus IDs
+    @GetMapping("/debug/usuarios")
+    public ResponseEntity<List<String>> listarUsuarios() {
+        return ResponseEntity.ok(usuarioRepository.findAll().stream()
+                .map(u -> u.getNickname() + " (ID: " + u.getId() + ")")
+                .collect(java.util.stream.Collectors.toList()));
     }
 }

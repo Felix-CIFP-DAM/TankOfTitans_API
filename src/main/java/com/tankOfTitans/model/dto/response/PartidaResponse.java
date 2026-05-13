@@ -1,5 +1,8 @@
 package com.tankOfTitans.model.dto.response;
 
+import java.util.List;
+import com.tankOfTitans.model.dto.JugadorLobbyDTO;
+
 public class PartidaResponse {
 
     private Long id;
@@ -9,13 +12,14 @@ public class PartidaResponse {
     private String hostNickname;
     private int jugadores;
     private boolean invitadoListo;
+    private List<JugadorLobbyDTO> jugadoresList;
     
 	public PartidaResponse() {
 		
 	}
 
 	public PartidaResponse(Long id, String nombre, boolean publica, String estado, String hostNickname, int jugadores,
-			boolean invitadoListo) {
+			boolean invitadoListo, List<JugadorLobbyDTO> jugadoresList) {
 		this.id = id;
 		this.nombre = nombre;
 		this.publica = publica;
@@ -23,6 +27,7 @@ public class PartidaResponse {
 		this.hostNickname = hostNickname;
 		this.jugadores = jugadores;
 		this.invitadoListo = invitadoListo;
+		this.jugadoresList = jugadoresList;
 	}
 
 	public Long getId() {
@@ -80,10 +85,11 @@ public class PartidaResponse {
 	public void setInvitadoListo(boolean invitadoListo) {
 		this.invitadoListo = invitadoListo;
 	}
-	
-	
-	
-	
-    
-    
+	public List<JugadorLobbyDTO> getJugadoresList() {
+		return jugadoresList;
+	}
+
+	public void setJugadoresList(List<JugadorLobbyDTO> jugadoresList) {
+		this.jugadoresList = jugadoresList;
+	}
 }

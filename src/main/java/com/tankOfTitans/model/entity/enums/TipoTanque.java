@@ -1,7 +1,8 @@
 package com.tankOfTitans.model.entity.enums;
 
 public enum TipoTanque {
-	SUPERPESADO,
-    LIGERO,
-    MEDIO
+	SuperPesado,
+    Pesado,
+    Ligero,
+    Mediano
 }
