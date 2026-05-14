@@ -9,16 +9,20 @@ public class JugadorLobbyDTO {
     private String iconoImagen;
     private boolean listo;
     private List<Long> tanquesIds;
+    private int pa;
+    private int vida;
 
     public JugadorLobbyDTO() {}
 
-    public JugadorLobbyDTO(Long id, String nickname, int icono, String iconoImagen, boolean listo, List<Long> tanquesIds) {
+    public JugadorLobbyDTO(Long id, String nickname, int icono, String iconoImagen, boolean listo, List<Long> tanquesIds, int pa, int vida) {
         this.id = id;
         this.nickname = nickname;
         this.icono = icono;
         this.iconoImagen = iconoImagen;
         this.listo = listo;
         this.tanquesIds = tanquesIds;
+        this.pa = pa;
+        this.vida = vida;
     }
 
     // Getters and Setters
@@ -39,4 +43,10 @@ public class JugadorLobbyDTO {
 
     public List<Long> getTanquesIds() { return tanquesIds; }
     public void setTanquesIds(List<Long> tanquesIds) { this.tanquesIds = tanquesIds; }
+
+    public int getPa() { return pa; }
+    public void setPa(int pa) { this.pa = pa; }
+
+    public int getVida() { return vida; }
+    public void setVida(int vida) { this.vida = vida; }
 }

@@ -27,13 +27,21 @@ public class PartidaJugador {
     @Column(nullable = false)
     private boolean listo = false;
 
+    @Column(name = "puntos_accion", nullable = false)
+    private int puntosAccion = 100;
+
+    @Column(nullable = false)
+    private int vida = 1000;
+
 	public PartidaJugador() {
 	}
 
-	public PartidaJugador(Partida partida, Usuario usuario, boolean listo) {
+	public PartidaJugador(Partida partida, Usuario usuario, boolean listo, int puntosAccion) {
 		this.partida = partida;
 		this.usuario = usuario;
 		this.listo = listo;
+		this.puntosAccion = puntosAccion;
+        this.vida = 1000;
 	}
 
 	public Long getId() {
@@ -67,11 +75,20 @@ public class PartidaJugador {
 	public void setListo(boolean listo) {
 		this.listo = listo;
 	}
-	
-	
-	
-	
-    
-    
 
+    public int getPuntosAccion() {
+        return puntosAccion;
+    }
+
+    public void setPuntosAccion(int puntosAccion) {
+        this.puntosAccion = puntosAccion;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
 }

@@ -21,6 +21,9 @@ public class PartidaTanque {
 	private int numeroTanque;
 
 	@Column(nullable = false)
+	private int hp;
+
+	@Column(nullable = false)
 	private boolean vivo = true;
 
 	@Column(nullable = false)
@@ -41,8 +44,9 @@ public class PartidaTanque {
 
 	}
 
-	public PartidaTanque(int numeroTanque, int posX, int posY, PartidaJugador partidaJugador, Tanque tanque) {
+	public PartidaTanque(int numeroTanque, int hp, int posX, int posY, PartidaJugador partidaJugador, Tanque tanque) {
 		this.numeroTanque = numeroTanque;
+		this.hp = hp;
 		this.posX = posX;
 		this.posY = posY;
 		this.partidaJugador = partidaJugador;
@@ -64,6 +68,14 @@ public class PartidaTanque {
 
 	public void setNumeroTanque(int numeroTanque) {
 		this.numeroTanque = numeroTanque;
+	}
+
+	public int getHp() {
+		return hp;
+	}
+
+	public void setHp(int hp) {
+		this.hp = hp;
 	}
 
 	public boolean isVivo() {

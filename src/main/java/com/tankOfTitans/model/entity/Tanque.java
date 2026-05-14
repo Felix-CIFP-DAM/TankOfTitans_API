@@ -46,9 +46,18 @@ public class Tanque {
     @Column(nullable = false)
     private String miniatura;
 
+    @Column(name = "coste_poner", nullable = false)
+    private int costePoner = 10;
+
+    @Column(name = "coste_atacar", nullable = false)
+    private int costeAtacar = 15;
+
+    @Column(name = "coste_mover", nullable = false)
+    private int costeMover = 5;
+
     public Tanque() {}
 
-    public Tanque(String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura) {
+    public Tanque(String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.hp = hp;
@@ -59,6 +68,9 @@ public class Tanque {
         this.precio = precio;
         this.imagenPortada = imagenPortada;
         this.miniatura = miniatura;
+        this.costePoner = costePoner;
+        this.costeAtacar = costeAtacar;
+        this.costeMover = costeMover;
     }
 
     // Getters and Setters
@@ -94,4 +106,13 @@ public class Tanque {
 
     public String getMiniatura() { return miniatura; }
     public void setMiniatura(String miniatura) { this.miniatura = miniatura; }
+
+    public int getCostePoner() { return costePoner; }
+    public void setCostePoner(int costePoner) { this.costePoner = costePoner; }
+
+    public int getCosteAtacar() { return costeAtacar; }
+    public void setCosteAtacar(int costeAtacar) { this.costeAtacar = costeAtacar; }
+
+    public int getCosteMover() { return costeMover; }
+    public void setCosteMover(int costeMover) { this.costeMover = costeMover; }
 }

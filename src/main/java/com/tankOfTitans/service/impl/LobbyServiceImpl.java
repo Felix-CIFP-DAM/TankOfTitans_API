@@ -74,7 +74,7 @@ public class LobbyServiceImpl implements LobbyService {
 		partidaRepository.save(partida);
 
 		// El host entra automáticamente como jugador
-		PartidaJugador jugador = new PartidaJugador(partida, host, false);
+		PartidaJugador jugador = new PartidaJugador(partida, host, false, 100);
 		jugador.setListo(false);
 		partidaJugadorRepository.save(jugador);
 
@@ -115,7 +115,7 @@ public class LobbyServiceImpl implements LobbyService {
 		Usuario usuario = usuarioRepository.findById(usuarioId)
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-		PartidaJugador jugador = new PartidaJugador(partida, usuario, false);
+		PartidaJugador jugador = new PartidaJugador(partida, usuario, false, 100);
 		partidaJugadorRepository.save(jugador);
 
 		jugadores.add(jugador);
@@ -194,7 +194,7 @@ public class LobbyServiceImpl implements LobbyService {
 			throw new RuntimeException("Este tanque ya está en tu pelotón");
 		}
 
-		PartidaTanque pt = new PartidaTanque(tanquesActuales.size() + 1, 0, 0, jugador, tanque);
+		PartidaTanque pt = new PartidaTanque(tanquesActuales.size() + 1, tanque.getHp(), 0, 0, jugador, tanque);
 		partidaTanqueRepository.save(pt);
 	}
 
@@ -344,7 +344,9 @@ public class LobbyServiceImpl implements LobbyService {
 							j.getUsuario().getIcono(),
 							iconoImagen,
 							j.isListo(),
-							tanquesIds);
+							tanquesIds,
+							j.getPuntosAccion(),
+							j.getVida());
 				})
 				.collect(Collectors.toList());
 
