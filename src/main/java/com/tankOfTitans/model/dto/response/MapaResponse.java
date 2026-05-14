@@ -1,7 +1,5 @@
 package com.tankOfTitans.model.dto.response;
 
-import java.util.List;
-import com.tankOfTitans.model.dto.CasillaDTO;
 import com.tankOfTitans.model.entity.MapData;
 
 public class MapaResponse {
@@ -9,19 +7,17 @@ public class MapaResponse {
     private String nombre;
     private int ancho;
     private int alto;
-    private List<CasillaDTO> casillas;
 	private MapData data;
     
 	public MapaResponse() {
 
 	}
 
-	public MapaResponse(Long id, String nombre, int ancho, int alto, List<CasillaDTO> casillas, MapData data) {
+	public MapaResponse(Long id, String nombre, int ancho, int alto, MapData data) {
 		this.id = id;
 		this.nombre = nombre;
 		this.ancho = ancho;
 		this.alto = alto;
-		this.casillas = casillas;
 		this.data = data;
 	}
 
@@ -55,14 +51,6 @@ public class MapaResponse {
 
 	public void setAlto(int alto) {
 		this.alto = alto;
-	}
-
-	public List<CasillaDTO> getCasillas() {
-		return casillas;
-	}
-
-	public void setCasillas(List<CasillaDTO> casillas) {
-		this.casillas = casillas;
 	}
 
 	public MapData getData() {

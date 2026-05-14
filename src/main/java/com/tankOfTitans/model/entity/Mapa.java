@@ -1,7 +1,5 @@
 package com.tankOfTitans.model.entity;
 
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -10,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -32,9 +29,6 @@ public class Mapa {
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "json")
 	private MapData data;
-
-    @OneToMany(mappedBy = "mapa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Casilla> casillas;
 
 	public Mapa() {
 	}
@@ -75,14 +69,6 @@ public class Mapa {
 
 	public void setAlto(int alto) {
 		this.alto = alto;
-	}
-
-	public List<Casilla> getCasillas() {
-		return casillas;
-	}
-
-	public void setCasillas(List<Casilla> casillas) {
-		this.casillas = casillas;
 	}
 
 	public MapData getData() {

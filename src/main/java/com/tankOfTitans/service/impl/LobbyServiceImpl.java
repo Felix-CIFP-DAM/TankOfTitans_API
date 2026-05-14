@@ -9,13 +9,18 @@ import com.tankOfTitans.model.dto.JugadorLobbyDTO;
 import com.tankOfTitans.model.dto.request.CreatePartidaRequest;
 import com.tankOfTitans.model.dto.request.JoinPartidaRequest;
 import com.tankOfTitans.model.dto.response.PartidaResponse;
+import com.tankOfTitans.model.entity.Mapa;
 import com.tankOfTitans.model.entity.Partida;
+import com.tankOfTitans.model.entity.PartidaBase;
 import com.tankOfTitans.model.entity.PartidaJugador;
 import com.tankOfTitans.model.entity.PartidaTanque;
 import com.tankOfTitans.model.entity.Tanque;
+import com.tankOfTitans.model.entity.Tile;
 import com.tankOfTitans.model.entity.Usuario;
 import com.tankOfTitans.model.entity.enums.EstadoPartida;
 import com.tankOfTitans.repository.AvatarRepository;
+import com.tankOfTitans.repository.MapaRepository;
+import com.tankOfTitans.repository.PartidaBaseRepository;
 import com.tankOfTitans.repository.PartidaJugadorRepository;
 import com.tankOfTitans.repository.PartidaRepository;
 import com.tankOfTitans.repository.PartidaTanqueRepository;
@@ -34,16 +39,21 @@ public class LobbyServiceImpl implements LobbyService {
 	private final AvatarRepository avatarRepository;
 	private final PartidaTanqueRepository partidaTanqueRepository;
 	private final TanqueRepository tanqueRepository;
+	private final MapaRepository mapaRepository;
+	private final PartidaBaseRepository partidaBaseRepository;
 
 	public LobbyServiceImpl(PartidaRepository partidaRepository, PartidaJugadorRepository partidaJugadorRepository,
 			UsuarioRepository usuarioRepository, AvatarRepository avatarRepository,
-			PartidaTanqueRepository partidaTanqueRepository, TanqueRepository tanqueRepository) {
+			PartidaTanqueRepository partidaTanqueRepository, TanqueRepository tanqueRepository,
+			MapaRepository mapaRepository, PartidaBaseRepository partidaBaseRepository) {
 		this.partidaRepository = partidaRepository;
 		this.partidaJugadorRepository = partidaJugadorRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.avatarRepository = avatarRepository;
 		this.partidaTanqueRepository = partidaTanqueRepository;
 		this.tanqueRepository = tanqueRepository;
+		this.mapaRepository = mapaRepository;
+		this.partidaBaseRepository = partidaBaseRepository;
 	}
 
 	@Override
@@ -203,6 +213,22 @@ public class LobbyServiceImpl implements LobbyService {
 
 		partidaTanqueRepository.delete(ptToRemove);
 	}
+	@Override
+	@Transactional
+	public void seleccionarMapa(Long usuarioId, Long partidaId, Long mapaId) {
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+
+		if (!partida.getHost().getId().equals(usuarioId)) {
+			throw new RuntimeException("Solo el host puede seleccionar el mapa");
+		}
+
+		Mapa mapa = mapaRepository.findById(mapaId)
+				.orElseThrow(() -> new RuntimeException("Mapa no encontrado"));
+
+		partida.setMapa(mapa);
+		partidaRepository.save(partida);
+	}
 
 	@Transactional
 	@Override
@@ -227,9 +253,58 @@ public class LobbyServiceImpl implements LobbyService {
 		}
 
 		partida.setEstado(EstadoPartida.EN_CURSO);
+		
+		// Si no hay mapa elegido, elegimos uno aleatorio
+		if (partida.getMapa() == null) {
+			List<Mapa> mapas = mapaRepository.findAll();
+			if (!mapas.isEmpty()) {
+				int randomIndex = (int) (Math.random() * mapas.size());
+				partida.setMapa(mapas.get(randomIndex));
+			} else {
+				throw new RuntimeException("No hay mapas disponibles en el sistema");
+			}
+		}
+
 		partidaRepository.save(partida);
 
+		// Inicializar bases según el mapa
+		inicializarBases(partida, jugadores);
+
 		return toResponse(partida, jugadores);
+	}
+
+	private void inicializarBases(Partida partida, List<PartidaJugador> jugadores) {
+		Mapa mapa = partida.getMapa();
+		if (mapa == null || mapa.getData() == null) return;
+
+		Tile[][] objetos = mapa.getData().getObjetos();
+		if (objetos == null) return;
+
+		Usuario host = partida.getHost();
+		Usuario invitado = jugadores.stream()
+				.filter(j -> !j.getUsuario().getId().equals(host.getId()))
+				.map(PartidaJugador::getUsuario)
+				.findFirst()
+				.orElse(null);
+
+		for (int y = 0; y < objetos.length; y++) {
+			for (int x = 0; x < objetos[y].length; x++) {
+				Tile tile = objetos[y][x];
+				if (tile != null) {
+					if ("Base_J1".equals(tile.getTipo())) {
+						// Solo creamos una entrada para el bloque superior izquierdo (o el primero que encontremos)
+						// Si ya existe una base para este jugador en esta partida, no creamos más
+						if (!partidaBaseRepository.existsByPartidaIdAndEsHost(partida.getId(), true)) {
+							partidaBaseRepository.save(new PartidaBase(partida, host, x, y, true));
+						}
+					} else if ("Base_J2".equals(tile.getTipo()) && invitado != null) {
+						if (!partidaBaseRepository.existsByPartidaIdAndEsHost(partida.getId(), false)) {
+							partidaBaseRepository.save(new PartidaBase(partida, invitado, x, y, false));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -283,8 +358,10 @@ public class LobbyServiceImpl implements LobbyService {
 				partida.isPublica(),
 				partida.getEstado().name(),
 				partida.getHost().getNickname(),
+				partida.getHost().getId(),
 				jugadores.size(),
 				invitadoListo,
-				jugadoresDTO);
+				jugadoresDTO,
+				partida.getMapa() != null ? partida.getMapa().getId() : null);
 	}
 }

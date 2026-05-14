@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface PartidaBaseRepository extends JpaRepository<PartidaBase, Long> {
     List<PartidaBase> findByPartidaId(Long partidaId);
+    boolean existsByPartidaIdAndEsHost(Long partidaId, boolean esHost);
 }

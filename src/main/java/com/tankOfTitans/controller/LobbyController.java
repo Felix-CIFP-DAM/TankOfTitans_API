@@ -162,4 +162,13 @@ public class LobbyController {
         lobbyService.deseleccionarTanque(request.getUsuarioId(), partidaId, request.getTanqueId());
         return ResponseEntity.ok("Tanque deseleccionado");
     }
+
+    // Seleccionar mapa
+    @PostMapping("/seleccionarMapa/{partidaId}")
+    public ResponseEntity<String> seleccionarMapa(
+            @PathVariable Long partidaId,
+            @RequestBody com.tankOfTitans.model.dto.request.SeleccionarMapaRequest request) {
+        lobbyService.seleccionarMapa(request.getUsuarioId(), partidaId, request.getMapaId());
+        return ResponseEntity.ok("Mapa seleccionado");
+    }
 }

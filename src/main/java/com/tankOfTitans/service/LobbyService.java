@@ -14,6 +14,7 @@ public interface LobbyService {
     void marcarListo(Long usuarioId, Long partidaId);
     void seleccionarTanque(Long usuarioId, Long partidaId, Long tanqueId);
     void deseleccionarTanque(Long usuarioId, Long partidaId, Long tanqueId);
+    void seleccionarMapa(Long usuarioId, Long partidaId, Long mapaId);
     PartidaResponse iniciarPartida(Long usuarioId, Long partidaId);
     List<PartidaResponse> listarPartidasDisponibles();
     PartidaResponse getEstadoPartida(Long partidaId);

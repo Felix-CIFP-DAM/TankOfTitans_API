@@ -10,24 +10,28 @@ public class PartidaResponse {
     private boolean publica;
     private String estado;
     private String hostNickname;
+    private Long hostId;
     private int jugadores;
     private boolean invitadoListo;
     private List<JugadorLobbyDTO> jugadoresList;
+    private Long mapaId;
     
 	public PartidaResponse() {
 		
 	}
 
-	public PartidaResponse(Long id, String nombre, boolean publica, String estado, String hostNickname, int jugadores,
-			boolean invitadoListo, List<JugadorLobbyDTO> jugadoresList) {
+	public PartidaResponse(Long id, String nombre, boolean publica, String estado, String hostNickname, Long hostId, int jugadores,
+			boolean invitadoListo, List<JugadorLobbyDTO> jugadoresList, Long mapaId) {
 		this.id = id;
 		this.nombre = nombre;
 		this.publica = publica;
 		this.estado = estado;
 		this.hostNickname = hostNickname;
+		this.hostId = hostId;
 		this.jugadores = jugadores;
 		this.invitadoListo = invitadoListo;
 		this.jugadoresList = jugadoresList;
+		this.mapaId = mapaId;
 	}
 
 	public Long getId() {
@@ -91,5 +95,21 @@ public class PartidaResponse {
 
 	public void setJugadoresList(List<JugadorLobbyDTO> jugadoresList) {
 		this.jugadoresList = jugadoresList;
+	}
+
+	public Long getHostId() {
+		return hostId;
+	}
+
+	public void setHostId(Long hostId) {
+		this.hostId = hostId;
+	}
+
+	public Long getMapaId() {
+		return mapaId;
+	}
+
+	public void setMapaId(Long mapaId) {
+		this.mapaId = mapaId;
 	}
 }
