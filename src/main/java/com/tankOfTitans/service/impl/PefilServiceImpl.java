@@ -1,6 +1,7 @@
 package com.tankOfTitans.service.impl;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.tankOfTitans.model.dto.request.ActualizarPerfilRequest;
 import com.tankOfTitans.model.dto.response.PerfilResponse;
@@ -10,11 +11,12 @@ import com.tankOfTitans.service.PerfilService;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class PefilServiceImpl implements PerfilService {
 	
 	private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-
+    
 	public PefilServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
 		this.usuarioRepository = usuarioRepository;
 		this.passwordEncoder = passwordEncoder;
