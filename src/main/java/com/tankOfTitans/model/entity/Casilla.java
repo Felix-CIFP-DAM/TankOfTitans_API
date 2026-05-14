@@ -25,6 +25,9 @@ public class Casilla {
 	 @Column(nullable = false)
 	 private boolean transitable;
 
+	 @Column(nullable = false, length = 50)
+	 private String tipo = "Normal";
+
 	 @ManyToOne
 	 @JoinColumn(name = "mapa_id", nullable = false)
 	 private Mapa mapa;
@@ -33,10 +36,11 @@ public class Casilla {
 		 
 	 }
 
-	 public Casilla(int posX, int posY, boolean transitable, Mapa mapa) {
+	 public Casilla(int posX, int posY, boolean transitable, String tipo, Mapa mapa) {
 	     this.posX = posX;
 	     this.posY = posY;
 	     this.transitable = transitable;
+		 this.tipo = tipo != null ? tipo : "Normal";
 	     this.mapa = mapa;
 	 }
 
@@ -79,6 +83,14 @@ public class Casilla {
 	 public void setMapa(Mapa mapa) {
 		 this.mapa = mapa;
 	 }
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
 	 
 	 
 }

@@ -57,7 +57,7 @@ public class MapaServiceImpl implements MapaService {
 		if (request.getCasillas() != null && !request.getCasillas().isEmpty()) {
 			for (CasillaDTO dto : request.getCasillas()) {
 				Casilla casilla = new Casilla(dto.getPosX(), dto.getPosY(),
-						dto.isTransitable(), mapa);
+						dto.isTransitable(), dto.getTipo(), mapa);
 				casillaRepository.save(casilla);
 				casillasDTO.add(dto);
 			}
@@ -69,22 +69,37 @@ public class MapaServiceImpl implements MapaService {
 			for (int y = 0; y < suelo.length; y++) {
 				for (int x = 0; x < suelo[y].length; x++) {
 					boolean transitable = true;
+					String tipo = "Normal";
 					
 					// Regla: si el suelo es No_Transitable, la casilla no es transitable
-					if (suelo[y][x] != null && "No_Transitable".equals(suelo[y][x].getTipo())) {
-						transitable = false;
+					if (suelo[y][x] != null) {
+						if ("No_Transitable".equals(suelo[y][x].getTipo())) {
+							transitable = false;
+						}
+						// Capturar tipo si es especial (ej: Base)
+						if (suelo[y][x].getTipo() != null && suelo[y][x].getTipo().startsWith("Base")) {
+							tipo = suelo[y][x].getTipo();
+							transitable = false; // Las bases no son transitables
+						}
 					}
 					
 					// Regla: si hay un objeto y es No_Transitable, la casilla no es transitable
 					if (objetos != null && y < objetos.length && x < objetos[y].length) {
-						if (objetos[y][x] != null && "No_Transitable".equals(objetos[y][x].getTipo())) {
-							transitable = false;
+						if (objetos[y][x] != null) {
+							if ("No_Transitable".equals(objetos[y][x].getTipo())) {
+								transitable = false;
+							}
+							// Los objetos también pueden ser bases
+							if (objetos[y][x].getTipo() != null && objetos[y][x].getTipo().startsWith("Base")) {
+								tipo = objetos[y][x].getTipo();
+								transitable = false;
+							}
 						}
 					}
 
-					Casilla casilla = new Casilla(x, y, transitable, mapa);
+					Casilla casilla = new Casilla(x, y, transitable, tipo, mapa);
 					casillaRepository.save(casilla);
-					casillasDTO.add(new CasillaDTO(x, y, transitable));
+					casillasDTO.add(new CasillaDTO(x, y, transitable, tipo));
 				}
 			}
 		}
@@ -99,7 +114,7 @@ public class MapaServiceImpl implements MapaService {
 
 	        List<CasillaDTO> casillas = casillaRepository.findByMapaId(mapaId)
 	                .stream()
-	                .map(c -> new CasillaDTO(c.getPosX(), c.getPosY(), c.isTransitable()))
+	                .map(c -> new CasillaDTO(c.getPosX(), c.getPosY(), c.isTransitable(), c.getTipo()))
 	                .collect(Collectors.toList());
 
 	        return toResponse(mapa, casillas);
@@ -111,7 +126,7 @@ public class MapaServiceImpl implements MapaService {
                 .map(m -> {
                     List<CasillaDTO> casillas = casillaRepository.findByMapaId(m.getId())
                             .stream()
-                            .map(c -> new CasillaDTO(c.getPosX(), c.getPosY(), c.isTransitable()))
+                            .map(c -> new CasillaDTO(c.getPosX(), c.getPosY(), c.isTransitable(), c.getTipo()))
                             .collect(Collectors.toList());
                     return toResponse(m, casillas);
                 })
