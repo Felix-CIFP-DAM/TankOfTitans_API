@@ -55,9 +55,12 @@ public class Tanque {
     @Column(name = "coste_mover", nullable = false)
     private int costeMover = 5;
 
+    @Column(name = "es_comprable", nullable = false)
+    private boolean esComprable = true;
+
     public Tanque() {}
 
-    public Tanque(String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover) {
+    public Tanque(String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover, boolean esComprable) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.hp = hp;
@@ -71,6 +74,15 @@ public class Tanque {
         this.costePoner = costePoner;
         this.costeAtacar = costeAtacar;
         this.costeMover = costeMover;
+        this.esComprable = esComprable;
+    }
+
+    public boolean isEsComprable() {
+        return esComprable;
+    }
+
+    public void setEsComprable(boolean esComprable) {
+        this.esComprable = esComprable;
     }
 
     // Getters and Setters

@@ -8,11 +8,13 @@ import com.tankOfTitans.model.dto.request.RegisterRequest;
 import com.tankOfTitans.model.dto.response.LoginResponse;
 import com.tankOfTitans.model.entity.Tanque;
 import com.tankOfTitans.model.entity.Usuario;
+import com.tankOfTitans.model.entity.UsuarioAvatar;
 import com.tankOfTitans.model.entity.UsuarioTanque;
 import com.tankOfTitans.repository.AvatarRepository;
 import com.tankOfTitans.repository.TanqueRepository;
 import com.tankOfTitans.repository.UsuarioRepository;
 import com.tankOfTitans.repository.UsuarioTanqueRepository;
+import com.tankOfTitans.repository.UsuarioAvatarRepository;
 import com.tankOfTitans.security.JWTUtil;
 import com.tankOfTitans.service.AuthService;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final AvatarRepository avatarRepository;
     private final TanqueRepository tanqueRepository;
     private final UsuarioTanqueRepository usuarioTanqueRepository;
+    private final UsuarioAvatarRepository usuarioAvatarRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
 
@@ -33,12 +36,14 @@ public class AuthServiceImpl implements AuthService {
                            AvatarRepository avatarRepository, 
                            TanqueRepository tanqueRepository,
                            UsuarioTanqueRepository usuarioTanqueRepository,
+                           UsuarioAvatarRepository usuarioAvatarRepository,
                            PasswordEncoder passwordEncoder, 
                            JWTUtil jwtUtil) {
         this.usuarioRepository = usuarioRepository;
         this.avatarRepository = avatarRepository;
         this.tanqueRepository = tanqueRepository;
         this.usuarioTanqueRepository = usuarioTanqueRepository;
+        this.usuarioAvatarRepository = usuarioAvatarRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
@@ -48,8 +53,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        Usuario user = usuarioRepository.findByNickname(request.getNickname())
-                .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
+        Usuario user = usuarioRepository.findByNicknameOrEmail(request.getNickname(), request.getNickname())
+                .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos. Nickname recibido: " + request.getNickname()));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Usuario o contraseña incorrectos");
@@ -93,6 +98,15 @@ public class AuthServiceImpl implements AuthService {
             tanqueRepository.findById(tankId).ifPresent(tanque -> {
                 UsuarioTanque ut = new UsuarioTanque(savedUser, tanque);
                 usuarioTanqueRepository.save(ut);
+            });
+        }
+
+        // Asignar avatares iniciales (2, 6, 8, 10, 11, 34, 43)
+        List<Long> initialAvatarIds = Arrays.asList(2L, 6L, 8L, 10L, 11L, 34L, 43L);
+        for (Long avatarId : initialAvatarIds) {
+            avatarRepository.findById(avatarId).ifPresent(avatar -> {
+                UsuarioAvatar ua = new UsuarioAvatar(savedUser, avatar);
+                usuarioAvatarRepository.save(ua);
             });
         }
 

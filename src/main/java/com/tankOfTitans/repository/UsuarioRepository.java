@@ -9,6 +9,7 @@ import com.tankOfTitans.model.entity.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByNickname(String nickname);
     Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByNicknameOrEmail(String nickname, String email);
     boolean existsByNickname (String nickname);
     boolean existsByEmail (String email);
 }

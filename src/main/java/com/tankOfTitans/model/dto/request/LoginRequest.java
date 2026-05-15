@@ -1,7 +1,5 @@
 package com.tankOfTitans.model.dto.request;
 
-
-
 public class LoginRequest {
 	private String nickname;
     private String password;

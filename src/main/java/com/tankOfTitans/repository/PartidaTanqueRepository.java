@@ -9,5 +9,6 @@ import com.tankOfTitans.model.entity.PartidaTanque;
 public interface PartidaTanqueRepository extends JpaRepository<PartidaTanque,Long> {
 	List<PartidaTanque> findByPartidaJugadorId(Long partidaJugadorId);
     void deleteByPartidaJugadorPartidaId(Long partidaId);
+    void deleteByPartidaJugadorId(Long partidaJugadorId);
 
 }

@@ -9,4 +9,5 @@ public interface PartidaService {
 	EstadoPartidaResponse guardarEstado(Long partidaId, EstadoPartidaRequest request);
     EstadoPartidaResponse recuperarEstado(Long partidaId);
     ResultadoPartidaResponse guardarResultado(Long partidaId, ResultadoPartidaRequest request);
+    void resetPartida(Long partidaId);
 }

@@ -14,10 +14,14 @@ public class TanqueResponse {
     private int precio;
     private String imagenPortada;
     private String miniatura;
+    private int costePoner;
+    private int costeAtacar;
+    private int costeMover;
+    private boolean esComprable;
 
     public TanqueResponse() {}
 
-    public TanqueResponse(Long id, String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura) {
+    public TanqueResponse(Long id, String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover, boolean esComprable) {
         this.id = id;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -29,6 +33,18 @@ public class TanqueResponse {
         this.precio = precio;
         this.imagenPortada = imagenPortada;
         this.miniatura = miniatura;
+        this.costePoner = costePoner;
+        this.costeAtacar = costeAtacar;
+        this.costeMover = costeMover;
+        this.esComprable = esComprable;
+    }
+
+    public boolean isEsComprable() {
+        return esComprable;
+    }
+
+    public void setEsComprable(boolean esComprable) {
+        this.esComprable = esComprable;
     }
 
     // Getters and Setters
@@ -64,4 +80,13 @@ public class TanqueResponse {
 
     public String getMiniatura() { return miniatura; }
     public void setMiniatura(String miniatura) { this.miniatura = miniatura; }
+
+    public int getCostePoner() { return costePoner; }
+    public void setCostePoner(int costePoner) { this.costePoner = costePoner; }
+
+    public int getCosteAtacar() { return costeAtacar; }
+    public void setCosteAtacar(int costeAtacar) { this.costeAtacar = costeAtacar; }
+
+    public int getCosteMover() { return costeMover; }
+    public void setCosteMover(int costeMover) { this.costeMover = costeMover; }
 }

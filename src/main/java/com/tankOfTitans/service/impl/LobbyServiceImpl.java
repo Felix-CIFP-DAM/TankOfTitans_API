@@ -132,7 +132,7 @@ public class LobbyServiceImpl implements LobbyService {
 			throw new RuntimeException("Solo el host puede eliminar la partida");
 		}
 
-		partidaJugadorRepository.deleteByPartidaId(partidaId);
+
 		partidaRepository.delete(partida);
 
 	}
@@ -158,6 +158,78 @@ public class LobbyServiceImpl implements LobbyService {
 					partidaRepository.save(partida);
 				});
 
+	}
+	
+	@Override
+	@Transactional
+	public void abandonarPartida(Long usuarioId, Long partidaId) {
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+
+		List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(partidaId);
+
+		PartidaJugador jugadorQueAbandona = jugadores.stream()
+				.filter(j -> j.getUsuario().getId().equals(usuarioId))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("No estás en esta partida"));
+
+		if (partida.getEstado() == EstadoPartida.EN_CURSO) {
+			// Si la partida estaba en curso, el que abandona pierde y el otro gana
+			Usuario usuarioQueAbandona = jugadorQueAbandona.getUsuario();
+			usuarioQueAbandona.setDerrotas(usuarioQueAbandona.getDerrotas() + 1);
+			usuarioQueAbandona.setPartidasJugadas(usuarioQueAbandona.getPartidasJugadas() + 1);
+			usuarioRepository.save(usuarioQueAbandona);
+
+			PartidaJugador jugadorGanador = jugadores.stream()
+					.filter(j -> !j.getUsuario().getId().equals(usuarioId))
+					.findFirst()
+					.orElse(null);
+
+			if (jugadorGanador != null) {
+				Usuario ganador = jugadorGanador.getUsuario();
+				ganador.setVictorias(ganador.getVictorias() + 1);
+				ganador.setPartidasJugadas(ganador.getPartidasJugadas() + 1);
+				ganador.setMonedas(ganador.getMonedas() + 50); // Compensación
+				usuarioRepository.save(ganador);
+			}
+
+			partida.setEstado(EstadoPartida.ESPERANDO);
+
+		}
+
+
+		partidaJugadorRepository.delete(jugadorQueAbandona);
+        
+        // El jugador restante pierde su 'listo'
+        if(partida.getEstado() == EstadoPartida.ESPERANDO) {
+             jugadores.stream()
+					.filter(j -> !j.getUsuario().getId().equals(usuarioId))
+					.findFirst()
+					.ifPresent(j -> {
+						j.setListo(false);
+						partidaJugadorRepository.save(j);
+					});
+        }
+
+		// Si era el host y hay más jugadores, cambiamos el host
+		if (partida.getHost().getId().equals(usuarioId)) {
+			PartidaJugador nuevoHost = jugadores.stream()
+					.filter(j -> !j.getUsuario().getId().equals(usuarioId))
+					.findFirst()
+					.orElse(null);
+			if (nuevoHost != null) {
+				partida.setHost(nuevoHost.getUsuario());
+			} else {
+				partidaRepository.delete(partida);
+				return;
+			}
+		}
+
+		if (jugadores.size() <= 1) {
+			partidaRepository.delete(partida);
+		} else {
+			partidaRepository.save(partida);
+		}
 	}
 
 	@Override
@@ -281,9 +353,13 @@ public class LobbyServiceImpl implements LobbyService {
 		if (objetos == null) return;
 
 		Usuario host = partida.getHost();
-		Usuario invitado = jugadores.stream()
+		PartidaJugador hostPJ = jugadores.stream()
+				.filter(j -> j.getUsuario().getId().equals(host.getId()))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Host PJ no encontrado"));
+		
+		PartidaJugador invitadoPJ = jugadores.stream()
 				.filter(j -> !j.getUsuario().getId().equals(host.getId()))
-				.map(PartidaJugador::getUsuario)
 				.findFirst()
 				.orElse(null);
 
@@ -292,14 +368,12 @@ public class LobbyServiceImpl implements LobbyService {
 				Tile tile = objetos[y][x];
 				if (tile != null) {
 					if ("Base_J1".equals(tile.getTipo())) {
-						// Solo creamos una entrada para el bloque superior izquierdo (o el primero que encontremos)
-						// Si ya existe una base para este jugador en esta partida, no creamos más
-						if (!partidaBaseRepository.existsByPartidaIdAndEsHost(partida.getId(), true)) {
-							partidaBaseRepository.save(new PartidaBase(partida, host, x, y, true));
+						if (!partidaBaseRepository.existsByPartidaJugadorPartidaIdAndEsHost(partida.getId(), true)) {
+							partidaBaseRepository.save(new PartidaBase(hostPJ, x, y, true));
 						}
-					} else if ("Base_J2".equals(tile.getTipo()) && invitado != null) {
-						if (!partidaBaseRepository.existsByPartidaIdAndEsHost(partida.getId(), false)) {
-							partidaBaseRepository.save(new PartidaBase(partida, invitado, x, y, false));
+					} else if ("Base_J2".equals(tile.getTipo()) && invitadoPJ != null) {
+						if (!partidaBaseRepository.existsByPartidaJugadorPartidaIdAndEsHost(partida.getId(), false)) {
+							partidaBaseRepository.save(new PartidaBase(invitadoPJ, x, y, false));
 						}
 					}
 				}

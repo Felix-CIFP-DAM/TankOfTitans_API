@@ -128,6 +128,22 @@ public class LobbyController {
         return ResponseEntity.ok("Partida eliminada correctamente");
     }
     
+    // Abandonar partida
+    @PostMapping("/abandonar/{partidaId}")
+    public ResponseEntity<String> abandonarPartida(
+            @PathVariable Long partidaId,
+            @RequestBody UsuarioIdRequest request) {
+        
+        System.out.println("[JAVA][LobbyController] 🚀 abandonarPartida para usuarioId: " + request.getUsuarioId());
+        
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuarioId es obligatorio para abandonar la partida");
+        }
+
+        lobbyService.abandonarPartida(request.getUsuarioId(), partidaId);
+        return ResponseEntity.ok("Has abandonado la partida correctamente");
+    }
+    
     // Cambiar host (cuando el host se desconecta)
     @PutMapping("/cambiarHost/{partidaId}/{hostActualId}")
     public ResponseEntity<String> cambiarHost(

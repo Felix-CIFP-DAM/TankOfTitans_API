@@ -45,5 +45,11 @@ public class PartidaController {
 	            @RequestBody ResultadoPartidaRequest request) {
 	        return ResponseEntity.ok(partidaService.guardarResultado(partidaId, request));
 	    }
+	    // Resetear partida a estado de preparación
+	    @PostMapping("/{partidaId}/reset")
+	    public ResponseEntity<Void> resetPartida(@PathVariable Long partidaId) {
+	        partidaService.resetPartida(partidaId);
+	        return ResponseEntity.ok().build();
+	    }
 	 
 }

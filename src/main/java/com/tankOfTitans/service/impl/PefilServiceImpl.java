@@ -102,7 +102,11 @@ public class PefilServiceImpl implements PerfilService {
 							t.getRangoAtaque(),
 							t.getPrecio(),
 							t.getImagenPortada(),
-							t.getMiniatura()
+							t.getMiniatura(),
+							t.getCostePoner(),
+							t.getCosteAtacar(),
+							t.getCosteMover(),
+							t.isEsComprable()
 					);
 				})
 				.collect(Collectors.toList());

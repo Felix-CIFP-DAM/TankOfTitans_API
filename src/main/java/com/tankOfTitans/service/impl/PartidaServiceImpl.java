@@ -182,10 +182,13 @@ public class PartidaServiceImpl implements PartidaService {
 
 	        if (empato) {
 	            usuario.setEmpates(usuario.getEmpates() + 1);
+                usuario.setMonedas(usuario.getMonedas() + 75); // Recompensa por empate
 	        } else if (gano) {
 	            usuario.setVictorias(usuario.getVictorias() + 1);
+                usuario.setMonedas(usuario.getMonedas() + 150); // Recompensa por ganar
 	        } else {
 	            usuario.setDerrotas(usuario.getDerrotas() + 1);
+                usuario.setMonedas(usuario.getMonedas() + 50); // Recompensa por perder
 	        }
 
 	        usuarioRepository.save(usuario);
@@ -203,4 +206,26 @@ public class PartidaServiceImpl implements PartidaService {
 	
 	
 
+	@Override
+    @Transactional
+    public void resetPartida(Long partidaId) {
+        Partida partida = partidaRepository.findById(partidaId)
+                .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+
+        partida.setEstado(EstadoPartida.PREPARACION);
+        partida.setGanador(null);
+        partida.setDuracionSegundos(0);
+        partida.setTanquesMuertosJ1(0);
+        partida.setTanquesMuertosJ2(0);
+
+        // Limpiar tanques y bases de los jugadores
+        List<PartidaJugador> jugadores = partidaJugadorRepository.findByPartidaId(partidaId);
+        for (PartidaJugador pj : jugadores) {
+            pj.getTanques().clear();
+            pj.getBases().clear();
+            partidaJugadorRepository.save(pj);
+        }
+
+        partidaRepository.save(partida);
+    }
 }

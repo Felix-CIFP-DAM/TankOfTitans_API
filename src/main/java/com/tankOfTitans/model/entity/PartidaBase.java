@@ -17,12 +17,8 @@ public class PartidaBase {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "partida_id", nullable = false)
-    private Partida partida;
-
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "partida_jugador_id", nullable = false)
+    private PartidaJugador partidaJugador;
 
     @Column(nullable = false)
     private int hp = 100;
@@ -38,9 +34,8 @@ public class PartidaBase {
 
     public PartidaBase() {}
 
-    public PartidaBase(Partida partida, Usuario usuario, int posX, int posY, boolean esHost) {
-        this.partida = partida;
-        this.usuario = usuario;
+    public PartidaBase(PartidaJugador partidaJugador, int posX, int posY, boolean esHost) {
+        this.partidaJugador = partidaJugador;
         this.posX = posX;
         this.posY = posY;
         this.esHost = esHost;
@@ -51,11 +46,8 @@ public class PartidaBase {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Partida getPartida() { return partida; }
-    public void setPartida(Partida partida) { this.partida = partida; }
-
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public PartidaJugador getPartidaJugador() { return partidaJugador; }
+    public void setPartidaJugador(PartidaJugador partidaJugador) { this.partidaJugador = partidaJugador; }
 
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = hp; }

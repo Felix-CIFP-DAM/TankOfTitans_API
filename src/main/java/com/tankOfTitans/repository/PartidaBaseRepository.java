@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PartidaBaseRepository extends JpaRepository<PartidaBase, Long> {
-    List<PartidaBase> findByPartidaId(Long partidaId);
-    boolean existsByPartidaIdAndEsHost(Long partidaId, boolean esHost);
+    List<PartidaBase> findByPartidaJugadorPartidaId(Long partidaId);
+    boolean existsByPartidaJugadorPartidaIdAndEsHost(Long partidaId, boolean esHost);
+    void deleteByPartidaJugadorPartidaId(Long partidaId);
 }

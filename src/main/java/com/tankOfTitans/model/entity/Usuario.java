@@ -67,6 +67,17 @@ public class Usuario {
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<UsuarioTanque> tanques = new ArrayList<>();
 
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<UsuarioAvatar> avatares = new ArrayList<>();
+
+	public List<UsuarioAvatar> getAvatares() {
+		return avatares;
+	}
+
+	public void setAvatares(List<UsuarioAvatar> avatares) {
+		this.avatares = avatares;
+	}
+
 
 	@Column(nullable = false)
 	private int icono = 0;
