@@ -66,6 +66,7 @@ public class PartidaServiceImpl implements PartidaService {
                         .orElseThrow(() -> new RuntimeException("Tanque #" + tanqueDTO.getNumeroTanque() + " no encontrado para el jugador"));
                 
                 pt.setVivo(tanqueDTO.isVivo());
+                pt.setHp(tanqueDTO.getHp());
                 pt.setPosX(tanqueDTO.getPosX());
                 pt.setPosY(tanqueDTO.getPosY());
                 partidaTanqueRepository.save(pt);
@@ -106,7 +107,7 @@ public class PartidaServiceImpl implements PartidaService {
                     .map(t -> new TanqueEstadoDTO(
                             t.getNumeroTanque(),
                             t.getTanque().getTipo(),
-                            t.getTanque().getHp(), // HP base, ya que se quitó hp de la tabla
+                            t.getHp(),
                             t.isVivo(),
                             t.getPosX(),
                             t.getPosY()

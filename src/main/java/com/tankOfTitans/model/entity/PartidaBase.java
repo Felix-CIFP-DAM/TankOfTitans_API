@@ -20,6 +20,7 @@ public class PartidaBase {
     @JoinColumn(name = "partida_jugador_id", nullable = false)
     private PartidaJugador partidaJugador;
 
+
     @Column(nullable = false)
     private int hp = 100;
 
@@ -32,7 +33,8 @@ public class PartidaBase {
     @Column(name = "es_host", nullable = false)
     private boolean esHost;
 
-    public PartidaBase() {}
+    public PartidaBase() {
+    }
 
     public PartidaBase(PartidaJugador partidaJugador, int posX, int posY, boolean esHost) {
         this.partidaJugador = partidaJugador;
@@ -43,21 +45,51 @@ public class PartidaBase {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public PartidaJugador getPartidaJugador() { return partidaJugador; }
-    public void setPartidaJugador(PartidaJugador partidaJugador) { this.partidaJugador = partidaJugador; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public int getHp() { return hp; }
-    public void setHp(int hp) { this.hp = hp; }
+    public PartidaJugador getPartidaJugador() {
+        return partidaJugador;
+    }
 
-    public int getPosX() { return posX; }
-    public void setPosX(int posX) { this.posX = posX; }
+    public void setPartidaJugador(PartidaJugador partidaJugador) {
+        this.partidaJugador = partidaJugador;
+    }
 
-    public int getPosY() { return posY; }
-    public void setPosY(int posY) { this.posY = posY; }
+    public int getHp() {
+        return hp;
+    }
 
-    public boolean isEsHost() { return esHost; }
-    public void setEsHost(boolean esHost) { this.esHost = esHost; }
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public boolean isEsHost() {
+        return esHost;
+    }
+
+    public void setEsHost(boolean esHost) {
+        this.esHost = esHost;
+    }
 }
