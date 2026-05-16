@@ -20,7 +20,6 @@ public class PartidaBase {
     @JoinColumn(name = "partida_jugador_id", nullable = false)
     private PartidaJugador partidaJugador;
 
-
     @Column(nullable = false)
     private int hp = 100;
 
