@@ -34,12 +34,17 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     @Override
+    @Transactional
     public List<AvatarResponse> listarAvataresParaUsuario(Long usuarioId) {
+        System.out.println("[JAVA][AvatarService] 📤 Listando avatares para usuarioId: " + usuarioId);
+        
         List<Avatar> todos = avatarRepository.findAll();
-        List<UsuarioAvatar> comprados = usuarioAvatarRepository.findByUsuarioId(usuarioId);
+        List<Long> idsComprados = usuarioAvatarRepository.findAvatarIdsByUsuarioId(usuarioId);
+        
+        System.out.println("[JAVA][AvatarService] 📥 Avatares totales: " + todos.size() + " | Avatares comprados (IDs): " + idsComprados);
         
         return todos.stream().map(a -> {
-            boolean comprado = comprados.stream().anyMatch(ua -> ua.getAvatar().getId().equals(a.getId()));
+            boolean comprado = idsComprados.contains(a.getId());
             return new AvatarResponse(a.getId(), a.getNombre(), a.getImagen(), a.getPrecio(), comprado, a.isEsComprable());
         }).toList();
     }

@@ -89,8 +89,10 @@ public class AuthServiceImpl implements AuthService {
                 passwordEncoder.encode(request.getPassword()),
                 request.getEmail()
         );
+        user.setIcono(2); // Establecemos el avatar ID 2 como predeterminado (uno de los iniciales)
 
         Usuario savedUser = usuarioRepository.save(user);
+        System.out.println("[JAVA][AuthService] 👤 Usuario registrado con ID: " + savedUser.getId());
 
         // Asignar tanques iniciales (45, 49, 56)
         List<Long> initialTankIds = Arrays.asList(45L, 49L, 56L);
@@ -104,9 +106,12 @@ public class AuthServiceImpl implements AuthService {
         // Asignar avatares iniciales (2, 6, 8, 10, 11, 34, 43)
         List<Long> initialAvatarIds = Arrays.asList(2L, 6L, 8L, 10L, 11L, 34L, 43L);
         for (Long avatarId : initialAvatarIds) {
-            avatarRepository.findById(avatarId).ifPresent(avatar -> {
+            avatarRepository.findById(avatarId).ifPresentOrElse(avatar -> {
                 UsuarioAvatar ua = new UsuarioAvatar(savedUser, avatar);
                 usuarioAvatarRepository.save(ua);
+                System.out.println("[JAVA][AuthService] 🎭 Avatar asignado: " + avatarId + " a usuario: " + savedUser.getId());
+            }, () -> {
+                System.err.println("[JAVA][AuthService] ⚠️ No se pudo asignar avatar inicial " + avatarId + ": No existe en la base de datos");
             });
         }
 

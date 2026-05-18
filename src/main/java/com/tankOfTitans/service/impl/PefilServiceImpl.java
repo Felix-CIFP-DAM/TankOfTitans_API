@@ -106,7 +106,8 @@ public class PefilServiceImpl implements PerfilService {
 							t.getCostePoner(),
 							t.getCosteAtacar(),
 							t.getCosteMover(),
-							t.isEsComprable()
+							t.isEsComprable(),
+							true // comprado
 					);
 				})
 				.collect(Collectors.toList());

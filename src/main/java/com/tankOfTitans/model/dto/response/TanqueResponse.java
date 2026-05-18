@@ -18,10 +18,11 @@ public class TanqueResponse {
     private int costeAtacar;
     private int costeMover;
     private boolean esComprable;
+    private boolean comprado;
 
     public TanqueResponse() {}
 
-    public TanqueResponse(Long id, String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover, boolean esComprable) {
+    public TanqueResponse(Long id, String nombre, TipoTanque tipo, int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque, int precio, String imagenPortada, String miniatura, int costePoner, int costeAtacar, int costeMover, boolean esComprable, boolean comprado) {
         this.id = id;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -37,6 +38,7 @@ public class TanqueResponse {
         this.costeAtacar = costeAtacar;
         this.costeMover = costeMover;
         this.esComprable = esComprable;
+        this.comprado = comprado;
     }
 
     public boolean isEsComprable() {
@@ -89,4 +91,7 @@ public class TanqueResponse {
 
     public int getCosteMover() { return costeMover; }
     public void setCosteMover(int costeMover) { this.costeMover = costeMover; }
+
+    public boolean isComprado() { return comprado; }
+    public void setComprado(boolean comprado) { this.comprado = comprado; }
 }

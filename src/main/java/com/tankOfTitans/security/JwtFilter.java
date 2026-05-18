@@ -34,11 +34,16 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractNickname(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                } catch (Exception e) {
+                    // Si el usuario del token no existe, simplemente no autenticamos
+                    System.err.println("[JAVA][JwtFilter] ⚠️ No se pudo autenticar al usuario: " + username);
+                }
             }
         }
 		filterChain.doFilter(request, response);	
